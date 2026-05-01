@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -6,10 +7,8 @@ import { HandicapDisplay } from "@/components/HandicapDisplay"
 import { StatsGrid } from "@/components/StatsGrid"
 import { HandicapChart } from "@/components/HandicapChart"
 import { RecentRounds } from "@/components/RecentRounds"
-import { AIInsights } from "@/components/AIInsights"
 import { AddRoundForm } from "@/components/AddRoundForm"
 import { CourseCalculator } from "@/components/CourseCalculator"
-import { ScrollArea } from "@/components/ui/scroll-area"
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -33,9 +32,8 @@ export default function Home() {
           <div className="space-y-8">
             <HandicapDisplay key={`hcp-${refreshKey}`} />
             <StatsGrid key={`stats-${refreshKey}`} />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6">
               <HandicapChart key={`chart-${refreshKey}`} />
-              <AIInsights key={`ai-${refreshKey}`} />
             </div>
             <RecentRounds refreshTrigger={refreshKey} />
           </div>
