@@ -31,6 +31,7 @@ export default function RootLayout({
         <title>SwingStats Pro | Elite Golf Analytics</title>
         <meta name="description" content="Serious analytics for serious golfers. Track handicap, strokes gained, and performance insights." />
         <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='white' stroke='%23e2e8f0' stroke-width='2'/><circle cx='30' cy='30' r='4' fill='%23cbd5e1'/><circle cx='50' cy='25' r='4' fill='%23cbd5e1'/><circle cx='70' cy='30' r='4' fill='%23cbd5e1'/><circle cx='25' cy='50' r='4' fill='%23cbd5e1'/><circle cx='50' cy='50' r='4' fill='%23cbd5e1'/><circle cx='75' cy='50' r='4' fill='%23cbd5e1'/><circle cx='30' cy='70' r='4' fill='%23cbd5e1'/><circle cx='50' cy='75' r='4' fill='%23cbd5e1'/><circle cx='70' cy='70' r='4' fill='%23cbd5e1'/></svg>" />
         <meta name="theme-color" content="#171F1C" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
