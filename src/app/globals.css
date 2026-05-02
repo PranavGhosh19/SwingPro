@@ -1,34 +1,30 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 158 15% 11%;
+    --background: 230 20% 4%;
     --foreground: 0 0% 98%;
-    --card: 158 15% 13%;
+    --card: 230 20% 7%;
     --card-foreground: 0 0% 98%;
-    --popover: 158 15% 11%;
+    --popover: 230 20% 5%;
     --popover-foreground: 0 0% 98%;
-    --primary: 160 50% 40%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 158 15% 20%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 230 15% 15%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 158 15% 20%;
-    --muted-foreground: 160 5% 70%;
-    --accent: 196 69% 59%;
-    --accent-foreground: 158 15% 11%;
-    --destructive: 0 62.8% 30.6%;
+    --muted: 230 15% 15%;
+    --muted-foreground: 230 5% 70%;
+    --accent: 191 91% 50%;
+    --accent-foreground: 230 20% 5%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 158 15% 20%;
-    --input: 158 15% 20%;
-    --ring: 160 50% 40%;
-    --radius: 0.75rem;
-    --chart-1: 160 50% 40%;
-    --chart-2: 196 69% 59%;
-    --chart-3: 160 30% 60%;
-    --chart-4: 196 40% 70%;
-    --chart-5: 0 0% 50%;
+    --border: 230 15% 15%;
+    --input: 230 15% 15%;
+    --ring: 160 84% 39%;
+    --radius: 1rem;
   }
 }
 
@@ -39,9 +35,29 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-image: 
+      radial-gradient(circle at 50% 0%, hsla(var(--primary), 0.15), transparent 50%),
+      radial-gradient(circle at 0% 100%, hsla(var(--accent), 0.1), transparent 40%);
+    background-attachment: fixed;
   }
 }
 
 .glass-panel {
-  @apply bg-card/50 backdrop-blur-md border border-white/5;
+  @apply bg-card/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
+}
+
+.neon-glow {
+  box-shadow: 0 0 20px -5px hsla(var(--primary), 0.5);
+}
+
+.neon-text {
+  text-shadow: 0 0 10px hsla(var(--primary), 0.5);
+}
+
+.futuristic-gradient {
+  background: linear-gradient(135deg, hsla(var(--primary), 0.2) 0%, hsla(var(--accent), 0.2) 100%);
+}
+
+.animate-morph {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
