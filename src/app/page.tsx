@@ -8,15 +8,17 @@ import { StatsGrid } from "@/components/StatsGrid"
 import { HandicapChart } from "@/components/HandicapChart"
 import { RecentRounds } from "@/components/RecentRounds"
 import { AddRoundForm } from "@/components/AddRoundForm"
-import { CourseCalculator } from "@/components/CourseCalculator"
 import { FeedsView } from "@/components/FeedsView"
 import { CompeteView } from "@/components/CompeteView"
 import { PerformanceView } from "@/components/PerformanceView"
-import { UserProfile, getUser, saveUser, clearSession } from "@/lib/db"
+import { UserProfile } from "@/lib/db"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useUser, useAuth, useFirestore, useDoc } from "@/firebase"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth"
+import { doc, setDoc } from "firebase/firestore"
 import { 
   LogOut, 
   User, 
@@ -28,7 +30,8 @@ import {
   Users2, 
   Briefcase,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Loader2
 } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { 
@@ -39,68 +42,85 @@ import {
   DialogTitle, 
   DialogTrigger 
 } from "@/components/ui/dialog"
+import { errorEmitter } from '@/firebase/error-emitter'
+import { FirestorePermissionError } from '@/firebase/errors'
 
 export default function App() {
-  const [view, setView] = useState<'signin' | 'signup' | 'onboarding' | 'home'>('signin');
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const { user, loading: authLoading } = useUser();
+  const auth = useAuth();
+  const db = useFirestore();
+  const isMobile = useIsMobile();
+  
+  const [view, setView] = useState<'signin' | 'signup' | 'onboarding'>('signin');
   const [activeTab, setActiveTab] = useState('dashboard');
   const [refreshKey, setRefreshKey] = useState(0);
-  const isMobile = useIsMobile();
 
   // Auth fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const savedUser = getUser();
-    if (savedUser) {
-      setUser(savedUser);
-      setView('home');
+  // Fetch real user profile from Firestore
+  const userProfileDoc = useDoc(user ? doc(db!, 'users', user.uid) : null);
+  const userProfile = userProfileDoc.data as UserProfile | undefined;
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!auth) return;
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error: any) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-  }, []);
-
-  const handleSignIn = (e: React.FormEvent) => {
-    e.preventDefault();
-    const mockUser: UserProfile = { 
-      email, 
-      fullName: email.split('@')[0],
-      xp: 450,
-      level: 4,
-      badges: ['Break 100'],
-      streaks: { weeksActive: 1, challengesJoined: 0 },
-      metrics: { longestDrive: 285, totalBirdies: 12 }
-    };
-    setUser(mockUser);
-    saveUser(mockUser);
-    setView('home');
   };
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setView('onboarding');
+    if (!auth) return;
+    setLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      setView('onboarding');
+    } catch (error: any) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleCompleteOnboarding = (e: React.FormEvent) => {
+  const handleCompleteOnboarding = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!db || !user) return;
+    setLoading(true);
+    
     const newUser: UserProfile = { 
-      email, 
+      email: user.email!, 
       fullName,
       xp: 0,
       level: 1,
       badges: [],
       streaks: { weeksActive: 0, challengesJoined: 0 },
-      metrics: { longestDrive: 0, totalBirdies: 0 }
+      metrics: { longestDrive: 0, totalBirdies: 0, bestRound: 0 }
     };
-    setUser(newUser);
-    saveUser(newUser);
-    setView('home');
+
+    setDoc(doc(db, 'users', user.uid), newUser)
+      .catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: `/users/${user.uid}`,
+          operation: 'create',
+          requestResourceData: newUser,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+      })
+      .finally(() => setLoading(false));
   };
 
   const handleSignOut = () => {
-    clearSession();
-    setUser(null);
-    setView('signin');
+    if (auth) signOut(auth);
   };
 
   const refreshData = () => {
@@ -127,7 +147,44 @@ export default function App() {
     }
   };
 
-  if (view === 'signin') {
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    if (view === 'signup') {
+      return (
+        <div className="min-h-screen flex items-center justify-center p-6 bg-background">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-sm space-y-8 glass-panel p-8 rounded-[2.5rem]">
+            <div className="text-center space-y-2">
+              <h1 className="text-4xl font-black tracking-tighter italic uppercase">Join <span className="text-primary neon-text">Elite</span></h1>
+              <p className="text-muted-foreground text-sm uppercase tracking-widest font-bold">Create your player profile</p>
+            </div>
+            <form onSubmit={handleSignUp} className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Email Address</Label>
+                <Input type="email" required className="h-12 bg-white/5 border-white/10 rounded-xl" placeholder="name@domain.com" value={email} onChange={e => setEmail(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Security Password</Label>
+                <Input type="password" required className="h-12 bg-white/5 border-white/10 rounded-xl" placeholder="Minimum 8 characters" value={password} onChange={e => setPassword(e.target.value)} />
+              </div>
+              <Button type="submit" disabled={loading} className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-black text-sm uppercase tracking-widest">
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Next Phase"}
+              </Button>
+            </form>
+            <div className="text-center">
+              <button onClick={() => setView('signin')} className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary underline underline-offset-4">Already Registered? Log In</button>
+            </div>
+          </motion.div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-background">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-sm space-y-8 glass-panel p-8 rounded-[2.5rem]">
@@ -150,7 +207,9 @@ export default function App() {
                 <Input type="password" required className="pl-10 h-12 bg-white/5 border-white/10 rounded-xl" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} />
               </div>
             </div>
-            <Button type="submit" className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-black text-sm uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-primary/20">Authorize Access</Button>
+            <Button type="submit" disabled={loading} className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-black text-sm uppercase tracking-widest shadow-xl shadow-primary/20">
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Authorize Access"}
+            </Button>
           </form>
           <div className="text-center">
             <button onClick={() => setView('signup')} className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors underline underline-offset-4">Initialize New Account</button>
@@ -160,34 +219,7 @@ export default function App() {
     );
   }
 
-  if (view === 'signup') {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-sm space-y-8 glass-panel p-8 rounded-[2.5rem]">
-          <div className="text-center space-y-2">
-            <h1 className="text-4xl font-black tracking-tighter italic uppercase">Join <span className="text-primary neon-text">Elite</span></h1>
-            <p className="text-muted-foreground text-sm uppercase tracking-widest font-bold">Create your player profile</p>
-          </div>
-          <form onSubmit={handleSignUp} className="space-y-4 pt-4">
-            <div className="space-y-2">
-              <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Email Address</Label>
-              <Input type="email" required className="h-12 bg-white/5 border-white/10 rounded-xl" placeholder="name@domain.com" value={email} onChange={e => setEmail(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Security Password</Label>
-              <Input type="password" required className="h-12 bg-white/5 border-white/10 rounded-xl" placeholder="Minimum 8 characters" value={password} onChange={e => setPassword(e.target.value)} />
-            </div>
-            <Button type="submit" className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-black text-sm uppercase tracking-widest">Next Phase</Button>
-          </form>
-          <div className="text-center">
-            <button onClick={() => setView('signin')} className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary underline underline-offset-4">Already Registered? Log In</button>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
-
-  if (view === 'onboarding') {
+  if (!userProfile && user) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-background">
         <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm space-y-8 glass-panel p-10 rounded-[2.5rem] relative overflow-hidden">
@@ -204,8 +236,8 @@ export default function App() {
               <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Full Name</Label>
               <Input required className="h-14 bg-white/5 border-white/10 rounded-xl text-lg font-bold" placeholder="Tiger Woods" value={fullName} onChange={e => setFullName(e.target.value)} />
             </div>
-            <Button type="submit" className="w-full h-14 rounded-xl bg-primary hover:bg-primary/90 text-white font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 group">
-              Complete Protocol <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <Button type="submit" disabled={loading} className="w-full h-14 rounded-xl bg-primary hover:bg-primary/90 text-white font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 group">
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Complete Protocol <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /></>}
             </Button>
           </form>
         </motion.div>
@@ -221,7 +253,7 @@ export default function App() {
             <h1 className="text-xl font-black tracking-tighter uppercase italic leading-none">
               SwingStats <span className="text-primary neon-text">Pro</span>
             </h1>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-1">Hello, {user?.fullName?.split(' ')[0]}</p>
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-1">Hello, {userProfile?.fullName?.split(' ')[0]}</p>
           </div>
           <Button variant="ghost" size="icon" onClick={handleSignOut} className="rounded-full hover:bg-destructive/10 hover:text-destructive text-muted-foreground">
             <LogOut className="w-5 h-5" />
@@ -241,10 +273,10 @@ export default function App() {
               className="space-y-8"
               onPanEnd={handleSwipe}
             >
-              <HandicapDisplay key={`hcp-${refreshKey}`} />
-              <StatsGrid key={`stats-${refreshKey}`} />
+              <HandicapDisplay />
+              <StatsGrid />
               <div className="grid grid-cols-1 gap-6">
-                <HandicapChart key={`chart-${refreshKey}`} />
+                <HandicapChart />
               </div>
               <RecentRounds refreshTrigger={refreshKey} />
             </motion.div>
@@ -302,8 +334,8 @@ export default function App() {
                       <User className="w-10 h-10 text-primary" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-black uppercase tracking-tight italic">{user?.fullName}</h3>
-                      <p className="text-sm text-muted-foreground font-bold">{user?.email}</p>
+                      <h3 className="text-2xl font-black uppercase tracking-tight italic">{userProfile?.fullName}</h3>
+                      <p className="text-sm text-muted-foreground font-bold">{userProfile?.email}</p>
                     </div>
                  </div>
                  <div className="grid grid-cols-2 gap-4">

@@ -1,24 +1,47 @@
+
 "use client"
 
-import { useEffect, useState } from "react"
-import { getRounds, deleteRound, type Round } from "@/lib/db"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { type Round } from "@/lib/db"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Trash2, ChevronRight, Calendar } from "lucide-react"
+import { Trash2, Calendar } from "lucide-react"
+import { useUser, useFirestore, useCollection } from "@/firebase"
+import { collection, query, orderBy, limit, doc, deleteDoc } from "firebase/firestore"
+import { useMemoFirebase } from "@/firebase/firestore/use-collection"
+import { errorEmitter } from '@/firebase/error-emitter'
+import { FirestorePermissionError } from '@/firebase/errors'
 
 export function RecentRounds({ refreshTrigger }: { refreshTrigger: number }) {
-  const [rounds, setRounds] = useState<Round[]>([]);
+  const { user } = useUser();
+  const db = useFirestore();
 
-  useEffect(() => {
-    setRounds(getRounds());
-  }, [refreshTrigger]);
+  const roundsQuery = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return query(
+      collection(db, 'users', user.uid, 'rounds'),
+      orderBy('date', 'desc'),
+      limit(5)
+    );
+  }, [db, user]);
+
+  const { data: roundsData, loading } = useCollection(roundsQuery);
+  const rounds = (roundsData || []) as Round[];
 
   const handleDelete = (id: string) => {
+    if (!db || !user) return;
     if (confirm('Delete this round?')) {
-      deleteRound(id);
-      setRounds(getRounds());
+      const docRef = doc(db, 'users', user.uid, 'rounds', id);
+      deleteDoc(docRef).catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: docRef.path,
+          operation: 'delete',
+        });
+        errorEmitter.emit('permission-error', permissionError);
+      });
     }
   };
+
+  if (loading) return <div className="p-8 text-center text-muted-foreground">Syncing data...</div>;
 
   if (rounds.length === 0) return (
     <div className="text-center p-8 bg-card rounded-lg border border-dashed border-white/10">
@@ -29,7 +52,7 @@ export function RecentRounds({ refreshTrigger }: { refreshTrigger: number }) {
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Recent Rounds</h3>
-      {rounds.slice(0, 5).map((round) => (
+      {rounds.map((round) => (
         <Card key={round.id} className="bg-card border-white/5 overflow-hidden group">
           <CardContent className="p-4 flex items-center justify-between">
             <div className="flex items-center space-x-4">

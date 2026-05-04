@@ -1,18 +1,33 @@
 
 "use client"
 
-import { calculateHandicap, getRounds } from "@/lib/db"
+import { calculateHandicap, type Round } from "@/lib/db"
 import { Trophy } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useMemo } from "react"
 import { motion } from "framer-motion"
+import { useUser, useFirestore, useCollection } from "@/firebase"
+import { collection, query, orderBy, limit } from "firebase/firestore"
+import { useMemoFirebase } from "@/firebase/firestore/use-collection"
 
 export function HandicapDisplay() {
-  const [handicap, setHandicap] = useState<number | null>(null);
+  const { user } = useUser();
+  const db = useFirestore();
 
-  useEffect(() => {
-    const rounds = getRounds();
-    setHandicap(calculateHandicap(rounds));
-  }, []);
+  const roundsQuery = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return query(
+      collection(db, 'users', user.uid, 'rounds'),
+      orderBy('date', 'desc'),
+      limit(20)
+    );
+  }, [db, user]);
+
+  const { data: roundsData } = useCollection(roundsQuery);
+  const rounds = (roundsData || []) as Round[];
+
+  const handicap = useMemo(() => {
+    return calculateHandicap(rounds);
+  }, [rounds]);
 
   return (
     <motion.div 

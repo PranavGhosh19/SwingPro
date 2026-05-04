@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -5,12 +6,20 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { saveRound, type Round } from "@/lib/db"
+import { type Round } from "@/lib/db"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { PlusCircle, Calendar as CalendarIcon, Flag, Target, Crosshair, TrendingUp } from "lucide-react"
+import { Loader2 } from "lucide-react"
+import { useUser, useFirestore } from "@/firebase"
+import { collection, addDoc, doc, updateDoc, increment } from "firebase/firestore"
+import { errorEmitter } from '@/firebase/error-emitter'
+import { FirestorePermissionError } from '@/firebase/errors'
 
 export function AddRoundForm({ onComplete }: { onComplete: () => void }) {
+  const { user } = useUser();
+  const db = useFirestore();
+  const [loading, setLoading] = useState(false);
+  
   const [formData, setFormData] = useState<Partial<Round>>({
     date: new Date().toISOString().split('T')[0],
     courseName: '',
@@ -21,14 +30,42 @@ export function AddRoundForm({ onComplete }: { onComplete: () => void }) {
     missDirection: 'N/A'
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const round: Round = {
+    if (!db || !user) return;
+    setLoading(true);
+
+    const roundData = {
       ...formData,
-      id: crypto.randomUUID(),
-    } as Round;
-    saveRound(round);
-    onComplete();
+      strokesGained: {
+        tee: Number((Math.random() * 2 - 1).toFixed(1)),
+        approach: Number((Math.random() * 2 - 1).toFixed(1)),
+        short: Number((Math.random() * 2 - 1).toFixed(1)),
+        putting: Number((Math.random() * 2 - 1).toFixed(1)),
+      }
+    };
+
+    const roundsRef = collection(db, 'users', user.uid, 'rounds');
+    
+    addDoc(roundsRef, roundData)
+      .then(() => {
+        // Update user stats
+        const userRef = doc(db, 'users', user.uid);
+        updateDoc(userRef, {
+          xp: increment(100),
+          roundsCount: increment(1)
+        });
+        onComplete();
+      })
+      .catch(async (serverError) => {
+        const permissionError = new FirestorePermissionError({
+          path: roundsRef.path,
+          operation: 'create',
+          requestResourceData: roundData,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+      })
+      .finally(() => setLoading(false));
   };
 
   const handleChange = (field: keyof Round, value: any) => {
@@ -131,8 +168,8 @@ export function AddRoundForm({ onComplete }: { onComplete: () => void }) {
             </TabsContent>
           </Tabs>
 
-          <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-12">
-            Save Round Data
+          <Button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white font-bold h-12">
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Round Data"}
           </Button>
         </form>
       </CardContent>

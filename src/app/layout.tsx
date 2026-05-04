@@ -1,15 +1,17 @@
 
 "use client"
 
-import type {Metadata} from 'next';
 import { useEffect } from 'react';
 import './globals.css';
+import { FirebaseClientProvider, initializeFirebase } from '@/firebase';
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { firebaseApp, firestore, auth } = initializeFirebase();
+
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -42,7 +44,9 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
       </head>
       <body className="font-body antialiased selection:bg-primary selection:text-white">
-        {children}
+        <FirebaseClientProvider firebaseApp={firebaseApp} firestore={firestore} auth={auth}>
+          {children}
+        </FirebaseClientProvider>
       </body>
     </html>
   );
