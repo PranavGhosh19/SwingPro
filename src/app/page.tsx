@@ -15,8 +15,28 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { LogOut, User, Mail, Lock, ChevronRight, Trophy } from "lucide-react"
+import { 
+  LogOut, 
+  User, 
+  Mail, 
+  Lock, 
+  ChevronRight, 
+  Trophy, 
+  Building2, 
+  Users2, 
+  Briefcase,
+  ArrowRight,
+  Sparkles
+} from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog"
 
 export default function App() {
   const [view, setView] = useState<'signin' | 'signup' | 'onboarding' | 'home'>('signin');
@@ -81,11 +101,9 @@ export default function App() {
   };
 
   const handleSwipe = (event: any, info: any) => {
-    // Left-to-right swipe (finger moves right)
     if (isMobile && activeTab === 'dashboard' && info.offset.x > 100) {
       setActiveTab('feeds');
     }
-    // Right-to-left swipe (finger moves left) from Feeds to Home
     if (isMobile && activeTab === 'feeds' && info.offset.x < -100) {
       setActiveTab('dashboard');
     }
@@ -248,7 +266,13 @@ export default function App() {
 
           {activeTab === 'settings' && (
             <motion.div key="settings" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="space-y-8">
-               <h2 className="text-3xl font-black tracking-tight uppercase italic">Player Profile</h2>
+               <div className="flex items-center justify-between">
+                 <h2 className="text-3xl font-black tracking-tight uppercase italic">Player Protocol</h2>
+                 <div className="bg-primary/20 px-3 py-1 rounded-full border border-primary/30">
+                   <span className="text-[10px] font-black text-primary uppercase tracking-widest">Active Status</span>
+                 </div>
+               </div>
+
                <div className="glass-panel rounded-[2rem] p-8 space-y-6">
                  <div className="flex items-center gap-6">
                     <div className="w-20 h-20 rounded-2xl bg-primary/20 flex items-center justify-center neon-glow border border-primary/30">
@@ -261,7 +285,7 @@ export default function App() {
                  </div>
                  <div className="grid grid-cols-2 gap-4">
                     <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Status</p>
+                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Rank</p>
                       <p className="font-bold text-primary flex items-center gap-2">
                         <Trophy className="w-4 h-4" /> Pro Member
                       </p>
@@ -271,10 +295,67 @@ export default function App() {
                       <p className="font-bold">Sync Active</p>
                     </div>
                  </div>
-                 <Button variant="outline" className="w-full h-12 rounded-xl border-destructive/20 text-destructive hover:bg-destructive/10 font-black uppercase tracking-widest text-[10px]" onClick={handleSignOut}>
-                   Terminate Session
-                 </Button>
                </div>
+
+               <div className="space-y-4">
+                 <div className="flex items-center gap-2">
+                   <Building2 className="w-5 h-5 text-primary" />
+                   <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">Business & Networking</h3>
+                 </div>
+                 
+                 <div className="grid grid-cols-1 gap-4">
+                   <Dialog>
+                     <DialogTrigger asChild>
+                       <button className="glass-panel rounded-3xl p-6 text-left group hover:bg-primary/5 transition-all duration-300 border-white/5 hover:border-primary/20">
+                         <div className="flex items-start justify-between">
+                           <div className="space-y-2">
+                             <div className="bg-primary/20 w-10 h-10 rounded-xl flex items-center justify-center mb-4 group-hover:neon-glow transition-all">
+                               <Briefcase className="w-5 h-5 text-primary" />
+                             </div>
+                             <h4 className="text-xl font-black uppercase italic tracking-tighter">Corporate Events</h4>
+                             <p className="text-xs text-muted-foreground font-medium max-w-[200px]">Plan elite corporate tournaments and networking events with our concierge.</p>
+                           </div>
+                           <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                         </div>
+                       </button>
+                     </DialogTrigger>
+                     <DialogContent className="glass-panel border-white/10 rounded-[2rem] max-w-sm">
+                       <DialogHeader>
+                         <DialogTitle className="text-2xl font-black uppercase italic">Event Protocol</DialogTitle>
+                         <DialogDescription className="text-muted-foreground font-medium">
+                           Our concierge will help you design a bespoke corporate golf experience.
+                         </DialogDescription>
+                       </DialogHeader>
+                       <div className="space-y-4 pt-4">
+                         <div className="space-y-2">
+                           <Label className="text-[10px] font-black uppercase">Expected Attendees</Label>
+                           <Input placeholder="e.g. 24 Players" className="bg-white/5 rounded-xl border-white/10" />
+                         </div>
+                         <Button className="w-full h-12 rounded-xl bg-primary font-black uppercase tracking-widest text-xs">Request Proposal</Button>
+                       </div>
+                     </DialogContent>
+                   </Dialog>
+
+                   <button className="glass-panel rounded-3xl p-6 text-left group hover:bg-accent/5 transition-all duration-300 border-white/5 hover:border-accent/20">
+                     <div className="flex items-start justify-between">
+                       <div className="space-y-2">
+                         <div className="bg-accent/20 w-10 h-10 rounded-xl flex items-center justify-center mb-4 group-hover:shadow-[0_0_15px_-3px_rgba(var(--accent),0.5)] transition-all">
+                           <Users2 className="w-5 h-5 text-accent" />
+                         </div>
+                         <h4 className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2">
+                           Connect over Tee <Sparkles className="w-4 h-4 text-accent animate-pulse" />
+                         </h4>
+                         <p className="text-xs text-muted-foreground font-medium max-w-[200px]">Book a course for 4 players. We'll match you with business leaders at your level.</p>
+                       </div>
+                       <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-accent group-hover:translate-x-1 transition-all" />
+                     </div>
+                   </button>
+                 </div>
+               </div>
+
+               <Button variant="outline" className="w-full h-14 rounded-2xl border-destructive/20 text-destructive hover:bg-destructive/10 font-black uppercase tracking-widest text-[10px] transition-all" onClick={handleSignOut}>
+                 Terminate Session
+               </Button>
             </motion.div>
           )}
         </AnimatePresence>
