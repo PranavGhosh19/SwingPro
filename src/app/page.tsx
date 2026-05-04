@@ -44,12 +44,14 @@ import {
 } from "@/components/ui/dialog"
 import { errorEmitter } from '@/firebase/error-emitter'
 import { FirestorePermissionError } from '@/firebase/errors'
+import { useToast } from "@/hooks/use-toast"
 
 export default function App() {
   const { user, loading: authLoading } = useUser();
   const auth = useAuth();
   const db = useFirestore();
   const isMobile = useIsMobile();
+  const { toast } = useToast();
   
   const [view, setView] = useState<'signin' | 'signup' | 'onboarding'>('signin');
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -77,7 +79,13 @@ export default function App() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
-      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Access Denied",
+        description: error.code === 'auth/invalid-credential' 
+          ? "The email or password you entered is incorrect. Please check your credentials and try again."
+          : (error.message || "An unexpected error occurred during sign in."),
+      });
     } finally {
       setLoading(false);
     }
@@ -91,7 +99,11 @@ export default function App() {
       await createUserWithEmailAndPassword(auth, email, password);
       setView('onboarding');
     } catch (error: any) {
-      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Registration Failed",
+        description: error.message || "Could not initialize your account. Please check your information.",
+      });
     } finally {
       setLoading(false);
     }

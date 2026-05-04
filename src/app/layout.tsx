@@ -4,6 +4,7 @@
 import { useEffect } from 'react';
 import './globals.css';
 import { FirebaseClientProvider, initializeFirebase } from '@/firebase';
+import { Toaster } from "@/components/ui/toaster";
 
 export default function RootLayout({
   children,
@@ -46,6 +47,7 @@ export default function RootLayout({
       <body className="font-body antialiased selection:bg-primary selection:text-white">
         <FirebaseClientProvider firebaseApp={firebaseApp} firestore={firestore} auth={auth}>
           {children}
+          <Toaster />
         </FirebaseClientProvider>
       </body>
     </html>
