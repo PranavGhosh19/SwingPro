@@ -16,7 +16,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useUser, useAuth, useFirestore, useDoc } from "@/firebase"
+import { useUser, useAuth, useFirestore, useDoc, useMemoFirebase } from "@/firebase"
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth"
 import { doc, setDoc } from "firebase/firestore"
 import { 
@@ -61,8 +61,14 @@ export default function App() {
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Memoize the document reference to prevent infinite re-renders
+  const userDocRef = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return doc(db, 'users', user.uid);
+  }, [db, user]);
+
   // Fetch real user profile from Firestore
-  const userProfileDoc = useDoc(user ? doc(db!, 'users', user.uid) : null);
+  const userProfileDoc = useDoc(userDocRef);
   const userProfile = userProfileDoc.data as UserProfile | undefined;
 
   const handleSignIn = async (e: React.FormEvent) => {
