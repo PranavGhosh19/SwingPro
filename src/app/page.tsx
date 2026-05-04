@@ -68,8 +68,7 @@ export default function App() {
   }, [db, user]);
 
   // Fetch real user profile from Firestore
-  const userProfileDoc = useDoc(userDocRef);
-  const userProfile = userProfileDoc.data as UserProfile | undefined;
+  const { data: userProfile, loading: profileLoading } = useDoc<UserProfile>(userDocRef);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,13 +109,14 @@ export default function App() {
       level: 1,
       badges: [],
       streaks: { weeksActive: 0, challengesJoined: 0 },
-      metrics: { longestDrive: 0, totalBirdies: 0, bestRound: 0 }
+      metrics: { longestDrive: 280, totalBirdies: 0, bestRound: 0 }
     };
 
-    setDoc(doc(db, 'users', user.uid), newUser)
+    const docRef = doc(db, 'users', user.uid);
+    setDoc(docRef, newUser)
       .catch(async (serverError) => {
         const permissionError = new FirestorePermissionError({
-          path: `/users/${user.uid}`,
+          path: docRef.path,
           operation: 'create',
           requestResourceData: newUser,
         });
@@ -221,6 +221,14 @@ export default function App() {
             <button onClick={() => setView('signup')} className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors underline underline-offset-4">Initialize New Account</button>
           </div>
         </motion.div>
+      </div>
+    );
+  }
+
+  if (profileLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
       </div>
     );
   }

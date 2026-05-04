@@ -47,6 +47,7 @@ export function AddRoundForm({ onComplete }: { onComplete: () => void }) {
 
     const roundsRef = collection(db, 'users', user.uid, 'rounds');
     
+    // No await here per guidelines for responsive offline-first UI
     addDoc(roundsRef, roundData)
       .then(() => {
         // Update user stats
