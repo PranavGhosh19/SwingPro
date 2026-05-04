@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -10,6 +9,7 @@ import { RecentRounds } from "@/components/RecentRounds"
 import { AddRoundForm } from "@/components/AddRoundForm"
 import { CourseCalculator } from "@/components/CourseCalculator"
 import { FeedsView } from "@/components/FeedsView"
+import { CompeteView } from "@/components/CompeteView"
 import { UserProfile, getUser, saveUser, clearSession } from "@/lib/db"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
@@ -60,7 +60,14 @@ export default function App() {
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
-    const mockUser: UserProfile = { email, fullName: email.split('@')[0] };
+    const mockUser: UserProfile = { 
+      email, 
+      fullName: email.split('@')[0],
+      xp: 450,
+      level: 4,
+      badges: ['Break 100'],
+      streaks: { weeksActive: 1, challengesJoined: 0 }
+    };
     setUser(mockUser);
     saveUser(mockUser);
     setView('home');
@@ -73,7 +80,14 @@ export default function App() {
 
   const handleCompleteOnboarding = (e: React.FormEvent) => {
     e.preventDefault();
-    const newUser: UserProfile = { email, fullName };
+    const newUser: UserProfile = { 
+      email, 
+      fullName,
+      xp: 0,
+      level: 1,
+      badges: [],
+      streaks: { weeksActive: 0, challengesJoined: 0 }
+    };
     setUser(newUser);
     saveUser(newUser);
     setView('home');
@@ -251,16 +265,9 @@ export default function App() {
             </motion.div>
           )}
 
-          {activeTab === 'rounds' && (
-            <motion.div key="rounds" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="space-y-6">
-              <h2 className="text-3xl font-black tracking-tight uppercase italic">Round History</h2>
-              <RecentRounds refreshTrigger={refreshKey} />
-            </motion.div>
-          )}
-
-          {activeTab === 'calc' && (
-            <motion.div key="calc" variants={containerVariants} initial="hidden" animate="visible" exit="exit">
-              <CourseCalculator />
+          {activeTab === 'compete' && (
+            <motion.div key="compete" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="space-y-6">
+              <CompeteView />
             </motion.div>
           )}
 
@@ -363,5 +370,5 @@ export default function App() {
 
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
-  )
+  );
 }

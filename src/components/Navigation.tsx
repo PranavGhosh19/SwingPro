@@ -1,7 +1,6 @@
-
 "use client"
 
-import { Home, List, Calculator, Settings, Plus, Users } from "lucide-react"
+import { Home, List, Calculator, Settings, Plus, Users, Trophy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
@@ -31,7 +30,7 @@ export function Navigation({ activeTab, onTabChange }: { activeTab: string, onTa
           </motion.div>
         </div>
 
-        <NavButton active={activeTab === 'rounds'} icon={List} label="History" onClick={() => onTabChange('rounds')} />
+        <NavButton active={activeTab === 'compete'} icon={Trophy} label="Compete" onClick={() => onTabChange('compete')} />
         <NavButton active={activeTab === 'settings'} icon={Settings} label="More" onClick={() => onTabChange('settings')} />
       </motion.div>
     </div>
