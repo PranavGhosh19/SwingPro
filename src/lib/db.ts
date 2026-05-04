@@ -1,5 +1,14 @@
 "use client"
 
+export interface UserProfile {
+  fullName: string;
+  email: string;
+  handicap?: number;
+  homeCourse?: string;
+  bestRound?: number;
+  roundsCount?: number;
+}
+
 export interface Round {
   id: string;
   date: string;
@@ -9,22 +18,29 @@ export interface Round {
   par: number;
   grossScore: number;
   netScore?: number;
-  strokesGainedOffTheTee?: number;
-  strokesGainedApproach?: number;
-  strokesGainedShortGame?: number;
-  strokesGainedPutting?: number;
   puttsPerRound?: number;
-  threePuttPercentage?: number;
-  onePuttPercentage?: number;
   fairwaysHitPercentage?: number;
-  averageDrivingDistance?: number;
-  missDirection?: 'left' | 'right' | 'straight' | 'N/A';
   girPercentage?: number;
-  upAndDownPercentage?: number;
   scramblingPercentage?: number;
+  missDirection?: 'left' | 'right' | 'straight' | 'N/A';
 }
 
 const STORAGE_KEY = 'swingstats_rounds';
+const USER_KEY = 'swingstats_user';
+
+export function saveUser(user: UserProfile): void {
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+}
+
+export function getUser(): UserProfile | null {
+  if (typeof window === 'undefined') return null;
+  const stored = localStorage.getItem(USER_KEY);
+  return stored ? JSON.parse(stored) : null;
+}
+
+export function clearSession(): void {
+  localStorage.removeItem(USER_KEY);
+}
 
 export function saveRound(round: Round): void {
   const rounds = getRounds();
