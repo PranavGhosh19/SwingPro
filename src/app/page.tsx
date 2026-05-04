@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -8,18 +9,21 @@ import { HandicapChart } from "@/components/HandicapChart"
 import { RecentRounds } from "@/components/RecentRounds"
 import { AddRoundForm } from "@/components/AddRoundForm"
 import { CourseCalculator } from "@/components/CourseCalculator"
+import { FeedsView } from "@/components/FeedsView"
 import { UserProfile, getUser, saveUser, clearSession } from "@/lib/db"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { LogOut, User, Mail, Lock, ChevronRight, Trophy } from "lucide-react"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export default function App() {
   const [view, setView] = useState<'signin' | 'signup' | 'onboarding' | 'home'>('signin');
   const [user, setUser] = useState<UserProfile | null>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [refreshKey, setRefreshKey] = useState(0);
+  const isMobile = useIsMobile();
 
   // Auth fields
   const [email, setEmail] = useState('');
@@ -36,7 +40,6 @@ export default function App() {
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mocking sign in - in real app would check DB
     const mockUser: UserProfile = { email, fullName: email.split('@')[0] };
     setUser(mockUser);
     saveUser(mockUser);
@@ -75,6 +78,17 @@ export default function App() {
       transition: { duration: 0.5, staggerChildren: 0.1 }
     },
     exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
+  };
+
+  const handleSwipe = (event: any, info: any) => {
+    // Left-to-right swipe (finger moves right)
+    if (isMobile && activeTab === 'dashboard' && info.offset.x > 100) {
+      setActiveTab('feeds');
+    }
+    // Right-to-left swipe (finger moves left) from Feeds to Home
+    if (isMobile && activeTab === 'feeds' && info.offset.x < -100) {
+      setActiveTab('dashboard');
+    }
   };
 
   if (view === 'signin') {
@@ -182,13 +196,34 @@ export default function App() {
       <main className="max-w-3xl mx-auto px-6 pt-8">
         <AnimatePresence mode="wait">
           {activeTab === 'dashboard' && (
-            <motion.div key="dashboard" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="space-y-8">
+            <motion.div 
+              key="dashboard" 
+              variants={containerVariants} 
+              initial="hidden" 
+              animate="visible" 
+              exit="exit" 
+              className="space-y-8"
+              onPanEnd={handleSwipe}
+            >
               <HandicapDisplay key={`hcp-${refreshKey}`} />
               <StatsGrid key={`stats-${refreshKey}`} />
               <div className="grid grid-cols-1 gap-6">
                 <HandicapChart key={`chart-${refreshKey}`} />
               </div>
               <RecentRounds refreshTrigger={refreshKey} />
+            </motion.div>
+          )}
+
+          {activeTab === 'feeds' && (
+            <motion.div 
+              key="feeds" 
+              variants={containerVariants} 
+              initial="hidden" 
+              animate="visible" 
+              exit="exit"
+              onPanEnd={handleSwipe}
+            >
+              <FeedsView />
             </motion.div>
           )}
 

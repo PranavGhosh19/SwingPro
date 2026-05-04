@@ -1,7 +1,7 @@
 
 "use client"
 
-import { Home, List, Calculator, Settings, Plus } from "lucide-react"
+import { Home, List, Calculator, Settings, Plus, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
@@ -11,10 +11,10 @@ export function Navigation({ activeTab, onTabChange }: { activeTab: string, onTa
       <motion.div 
         initial={{ y: 100 }}
         animate={{ y: 0 }}
-        className="max-w-md mx-auto glass-panel rounded-3xl p-3 flex items-center justify-between relative"
+        className="max-w-md mx-auto glass-panel rounded-3xl p-3 flex items-center justify-around relative"
       >
         <NavButton active={activeTab === 'dashboard'} icon={Home} label="Home" onClick={() => onTabChange('dashboard')} />
-        <NavButton active={activeTab === 'rounds'} icon={List} label="History" onClick={() => onTabChange('rounds')} />
+        <NavButton active={activeTab === 'feeds'} icon={Users} label="Social" onClick={() => onTabChange('feeds')} />
         
         <div className="relative -top-8">
           <motion.div
@@ -22,16 +22,16 @@ export function Navigation({ activeTab, onTabChange }: { activeTab: string, onTa
             whileTap={{ scale: 0.9 }}
           >
             <Button 
-              className="w-16 h-16 rounded-2xl bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/40 border-4 border-background"
+              className="w-14 h-14 rounded-2xl bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/40 border-4 border-background"
               size="icon"
               onClick={() => onTabChange('add')}
             >
-              <Plus className="w-10 h-10 text-white" />
+              <Plus className="w-8 h-8 text-white" />
             </Button>
           </motion.div>
         </div>
 
-        <NavButton active={activeTab === 'calc'} icon={Calculator} label="Course" onClick={() => onTabChange('calc')} />
+        <NavButton active={activeTab === 'rounds'} icon={List} label="History" onClick={() => onTabChange('rounds')} />
         <NavButton active={activeTab === 'settings'} icon={Settings} label="More" onClick={() => onTabChange('settings')} />
       </motion.div>
     </div>
@@ -44,8 +44,8 @@ function NavButton({ icon: Icon, label, active, onClick }: { icon: any, label: s
       onClick={onClick}
       className="relative flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all duration-300"
     >
-      <Icon className={`w-6 h-6 transition-all duration-300 ${active ? 'text-primary scale-110' : 'text-muted-foreground hover:text-foreground'}`} />
-      <span className={`text-[9px] font-black uppercase tracking-tighter transition-all duration-300 ${active ? 'opacity-100 text-primary' : 'opacity-0'}`}>
+      <Icon className={`w-5 h-5 transition-all duration-300 ${active ? 'text-primary scale-110' : 'text-muted-foreground hover:text-foreground'}`} />
+      <span className={`text-[8px] font-black uppercase tracking-tighter mt-1 transition-all duration-300 ${active ? 'opacity-100 text-primary' : 'opacity-0'}`}>
         {label}
       </span>
       {active && (
