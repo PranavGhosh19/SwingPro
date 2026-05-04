@@ -1,6 +1,7 @@
+
 "use client"
 
-import { Home, List, Calculator, Settings, Plus, Users, Trophy } from "lucide-react"
+import { Home, List, Calculator, Settings, Plus, Users, Trophy, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
@@ -10,22 +11,22 @@ export function Navigation({ activeTab, onTabChange }: { activeTab: string, onTa
       <motion.div 
         initial={{ y: 100 }}
         animate={{ y: 0 }}
-        className="max-w-md mx-auto glass-panel rounded-3xl p-3 flex items-center justify-around relative"
+        className="max-w-md mx-auto glass-panel rounded-3xl p-2 flex items-center justify-around relative"
       >
         <NavButton active={activeTab === 'dashboard'} icon={Home} label="Home" onClick={() => onTabChange('dashboard')} />
-        <NavButton active={activeTab === 'feeds'} icon={Users} label="Social" onClick={() => onTabChange('feeds')} />
+        <NavButton active={activeTab === 'performance'} icon={BarChart3} label="Stats" onClick={() => onTabChange('performance')} />
         
-        <div className="relative -top-8">
+        <div className="relative -top-6">
           <motion.div
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
             <Button 
-              className="w-14 h-14 rounded-2xl bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/40 border-4 border-background"
+              className="w-12 h-12 rounded-2xl bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/40 border-4 border-background"
               size="icon"
               onClick={() => onTabChange('add')}
             >
-              <Plus className="w-8 h-8 text-white" />
+              <Plus className="w-6 h-6 text-white" />
             </Button>
           </motion.div>
         </div>

@@ -1,3 +1,4 @@
+
 "use client"
 
 export interface UserProfile {
@@ -14,6 +15,10 @@ export interface UserProfile {
     weeksActive: number;
     challengesJoined: number;
   };
+  metrics?: {
+    longestDrive: number;
+    totalBirdies: number;
+  }
 }
 
 export interface Round {
@@ -29,7 +34,14 @@ export interface Round {
   fairwaysHitPercentage?: number;
   girPercentage?: number;
   scramblingPercentage?: number;
+  threePuttPercentage?: number;
   missDirection?: 'left' | 'right' | 'straight' | 'N/A';
+  strokesGained?: {
+    tee: number;
+    approach: number;
+    short: number;
+    putting: number;
+  }
 }
 
 export interface Challenge {
@@ -68,12 +80,9 @@ export function getUser(): UserProfile | null {
   const stored = localStorage.getItem(USER_KEY);
   if (!stored) return null;
   const user = JSON.parse(stored);
-  // Migrate old users to v2.0 schema
-  if (user.xp === undefined) {
-    user.xp = 450;
-    user.level = 4;
-    user.badges = ['Break 100', 'Clutch Player'];
-    user.streaks = { weeksActive: 2, challengesJoined: 1 };
+  // Migrate user with metrics
+  if (!user.metrics) {
+    user.metrics = { longestDrive: 285, totalBirdies: 12 };
     saveUser(user);
   }
   return user;
@@ -85,14 +94,26 @@ export function clearSession(): void {
 
 export function saveRound(round: Round): void {
   const rounds = getRounds();
+  
+  // Mock Strokes Gained for MVP
+  const diff = round.grossScore - round.par;
+  round.strokesGained = {
+    tee: Number((Math.random() * 2 - 1).toFixed(1)),
+    approach: Number((Math.random() * 2 - 1).toFixed(1)),
+    short: Number((Math.random() * 2 - 1).toFixed(1)),
+    putting: Number((Math.random() * 2 - 1).toFixed(1)),
+  };
+
   rounds.unshift(round);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(rounds));
   
-  // Award XP
   const user = getUser();
   if (user) {
     user.xp += 100;
     user.roundsCount = (user.roundsCount || 0) + 1;
+    if (round.grossScore < (user.bestRound || 200)) {
+      user.bestRound = round.grossScore;
+    }
     if (user.xp >= user.level * 500) {
       user.level += 1;
     }
