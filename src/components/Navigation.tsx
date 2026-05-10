@@ -1,11 +1,15 @@
-
 "use client"
 
-import { Home, List, Calculator, Settings, Plus, Users, Trophy, BarChart3 } from "lucide-react"
+import { Home, Settings, Plus, Trophy, BarChart3, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export function Navigation({ activeTab, onTabChange }: { activeTab: string, onTabChange: (tab: string) => void }) {
+  const isMobile = useIsMobile();
+
+  if (!isMobile) return null;
+
   return (
     <div className="fixed bottom-6 left-0 right-0 px-6 z-50">
       <motion.div 
