@@ -1,4 +1,3 @@
-
 "use client"
 
 export interface UserProfile {
@@ -30,15 +29,28 @@ export interface Course {
   tees: Tee[];
 }
 
+export type TournamentFormat = 'stroke' | 'stableford' | 'match' | 'scramble' | 'better_ball' | 'team_event';
+
 export interface Tournament {
   id: string;
   clubId: string;
   title: string;
-  format: 'stroke' | 'stableford' | 'match' | 'scramble';
+  description?: string;
+  format: TournamentFormat;
   status: 'upcoming' | 'active' | 'completed';
   startDate: string;
   endDate: string;
-  participants: string[];
+  participants: string[]; // User IDs
+  entryFee: number;
+  maxPlayers: number;
+  allowance: number; // e.g., 0.95 for 95%
+  teeSelection: string; // "Black", "Blue", etc.
+  divisions?: string[];
+  pairings?: {
+    groupId: string;
+    players: string[];
+    teeTime: string;
+  }[];
 }
 
 export interface Round {
@@ -58,6 +70,12 @@ export interface Round {
   threePuttPercentage?: number;
   scramblingPercentage?: number;
   missDirection?: string;
+  strokesGained?: {
+    tee: number;
+    approach: number;
+    short: number;
+    putting: number;
+  }
 }
 
 export function calculateDifferential(round: Round): number {

@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -11,7 +10,9 @@ import {
   Settings, 
   Plus, 
   LogOut,
-  Calculator
+  Calculator,
+  Flag,
+  Users
 } from "lucide-react"
 
 import {
@@ -52,14 +53,23 @@ export function AppSidebar() {
 
   const isClub = userProfile?.role === 'club';
 
-  const menuItems = [
-    { href: '/dashboard', icon: Home, label: isClub ? 'Operations' : 'Dashboard' },
+  const clubItems = [
+    { href: '/dashboard', icon: Home, label: 'Ops Hub' },
+    { href: '/tournaments', icon: Trophy, label: 'Tournaments' },
+    { href: '/members', icon: Users, label: 'Members' },
+    { href: '/settings', icon: Settings, label: 'Settings' },
+  ];
+
+  const golferItems = [
+    { href: '/dashboard', icon: Home, label: 'Dashboard' },
     { href: '/performance', icon: BarChart3, label: 'Performance' },
     { href: '/calculator', icon: Calculator, label: 'Course HCP' },
     { href: '/compete', icon: Trophy, label: 'Competition' },
     { href: '/add-round', icon: Plus, label: 'Record Round' },
     { href: '/settings', icon: Settings, label: 'Settings' },
   ];
+
+  const menuItems = isClub ? clubItems : golferItems;
 
   return (
     <Sidebar className="border-r border-white/5 bg-card/40 backdrop-blur-xl">
@@ -68,12 +78,14 @@ export function AppSidebar() {
           <h1 className="text-xl font-black tracking-tighter uppercase italic leading-none">
             SwingStats <span className="text-primary neon-text">Pro</span>
           </h1>
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-2">Elite Analytics v2.0</p>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-2">
+            {isClub ? 'Club Operations' : 'Elite Analytics'} v2.0
+          </p>
         </div>
       </SidebarHeader>
       <SidebarContent className="px-4 modern-scrollbar">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">Operations</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => {
