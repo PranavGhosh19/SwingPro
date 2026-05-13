@@ -1,0 +1,22 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-golf",
+      "description": "Aerial view of a prestigious golf course at sunset",
+      "imageUrl": "https://picsum.photos/seed/golf1/1200/800",
+      "imageHint": "golf course"
+    },
+    {
+      "id": "leaderboard-mock",
+      "description": "Sleek tournament leaderboard UI mockup",
+      "imageUrl": "https://picsum.photos/seed/golf2/600/400",
+      "imageHint": "leaderboard interface"
+    },
+    {
+      "id": "mobile-app",
+      "description": "Golfer using mobile app on the green",
+      "imageUrl": "https://picsum.photos/seed/golf3/400/600",
+      "imageHint": "mobile phone"
+    }
+  ]
+}
