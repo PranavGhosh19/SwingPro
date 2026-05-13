@@ -1,12 +1,16 @@
+
 "use client"
 
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Home, Settings, Plus, Trophy, Calculator } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { useIsMobile } from "@/hooks/use-mobile"
 
-export function Navigation({ activeTab, onTabChange }: { activeTab: string, onTabChange: (tab: string) => void }) {
+export function Navigation() {
   const isMobile = useIsMobile();
+  const pathname = usePathname();
 
   if (!isMobile) return null;
 
@@ -18,8 +22,8 @@ export function Navigation({ activeTab, onTabChange }: { activeTab: string, onTa
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
         className="max-w-md mx-auto glass-panel rounded-[2rem] p-3 flex items-center justify-around relative vigilant-scan shadow-[0_-8px_32px_0_rgba(0,0,0,0.4)]"
       >
-        <NavButton active={activeTab === 'dashboard'} icon={Home} label="Home" onClick={() => onTabChange('dashboard')} />
-        <NavButton active={activeTab === 'calculator'} icon={Calculator} label="Calc" onClick={() => onTabChange('calculator')} />
+        <NavButton active={pathname === '/dashboard'} href="/dashboard" icon={Home} label="Home" />
+        <NavButton active={pathname === '/calculator'} href="/calculator" icon={Calculator} label="Calc" />
         
         <div className="relative -top-8">
           <motion.div
@@ -29,28 +33,27 @@ export function Navigation({ activeTab, onTabChange }: { activeTab: string, onTa
           >
             <div className="absolute inset-0 bg-primary blur-xl opacity-30 animate-pulse" />
             <Button 
+              asChild
               className="w-14 h-14 rounded-2xl bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/40 border-4 border-background relative z-10"
               size="icon"
-              onClick={() => onTabChange('add')}
             >
-              <Plus className="w-7 h-7 text-white" />
+              <Link href="/add-round">
+                <Plus className="w-7 h-7 text-white" />
+              </Link>
             </Button>
           </motion.div>
         </div>
 
-        <NavButton active={activeTab === 'compete'} icon={Trophy} label="Compete" onClick={() => onTabChange('compete')} />
-        <NavButton active={activeTab === 'settings'} icon={Settings} label="More" onClick={() => onTabChange('settings')} />
+        <NavButton active={pathname === '/compete'} href="/compete" icon={Trophy} label="Compete" />
+        <NavButton active={pathname === '/settings'} href="/settings" icon={Settings} label="More" />
       </motion.div>
     </div>
   )
 }
 
-function NavButton({ icon: Icon, label, active, onClick }: { icon: any, label: string, active: boolean, onClick: () => void }) {
+function NavButton({ icon: Icon, label, active, href }: { icon: any, label: string, active: boolean, href: string }) {
   return (
-    <button 
-      onClick={onClick}
-      className="relative flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all duration-300"
-    >
+    <Link href={href} className="relative flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all duration-300">
       <div className="relative z-20 flex flex-col items-center">
         <Icon className={`w-6 h-6 transition-all duration-500 ${active ? 'text-primary scale-110' : 'text-muted-foreground'}`} />
         <AnimatePresence>
@@ -74,6 +77,6 @@ function NavButton({ icon: Icon, label, active, onClick }: { icon: any, label: s
           transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
         />
       )}
-    </button>
+    </Link>
   )
 }

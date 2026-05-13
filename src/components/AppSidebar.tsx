@@ -2,16 +2,15 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { 
   Home, 
   BarChart3, 
   Trophy, 
   Settings, 
   Plus, 
-  Users,
   LogOut,
-  User,
-  Activity,
   Calculator
 } from "lucide-react"
 
@@ -34,10 +33,11 @@ import { doc } from "firebase/firestore"
 import { useFirestore } from "@/firebase"
 import { useMemoFirebase } from "@/firebase/firestore/use-collection"
 
-export function AppSidebar({ activeTab, onTabChange }: { activeTab: string, onTabChange: (tab: string) => void }) {
+export function AppSidebar() {
   const auth = useAuth();
   const db = useFirestore();
   const { user } = useUser();
+  const pathname = usePathname();
 
   const userDocRef = useMemoFirebase(() => {
     if (!db || !user) return null;
@@ -53,12 +53,12 @@ export function AppSidebar({ activeTab, onTabChange }: { activeTab: string, onTa
   const isClub = userProfile?.role === 'club';
 
   const menuItems = [
-    { id: 'dashboard', icon: Home, label: isClub ? 'Operations' : 'Dashboard' },
-    { id: 'performance', icon: BarChart3, label: 'Performance' },
-    { id: 'calculator', icon: Calculator, label: 'Course HCP' },
-    { id: 'compete', icon: Trophy, label: 'Competition' },
-    { id: 'add', icon: Plus, label: 'Record Round' },
-    { id: 'settings', icon: Settings, label: 'Settings' },
+    { href: '/dashboard', icon: Home, label: isClub ? 'Operations' : 'Dashboard' },
+    { href: '/performance', icon: BarChart3, label: 'Performance' },
+    { href: '/calculator', icon: Calculator, label: 'Course HCP' },
+    { href: '/compete', icon: Trophy, label: 'Competition' },
+    { href: '/add-round', icon: Plus, label: 'Record Round' },
+    { href: '/settings', icon: Settings, label: 'Settings' },
   ];
 
   return (
@@ -76,22 +76,27 @@ export function AppSidebar({ activeTab, onTabChange }: { activeTab: string, onTa
           <SidebarGroupLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">Operations</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton 
-                    onClick={() => onTabChange(item.id)}
-                    isActive={activeTab === item.id}
-                    className={`h-12 rounded-xl px-4 transition-all duration-300 ${
-                      activeTab === item.id 
-                      ? 'bg-primary/10 text-primary neon-glow border border-primary/20' 
-                      : 'hover:bg-white/5 text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    <item.icon className={`w-5 h-5 ${activeTab === item.id ? 'text-primary' : 'text-muted-foreground'}`} />
-                    <span className="font-bold uppercase text-xs tracking-widest ml-3">{item.label}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {menuItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton 
+                      asChild
+                      isActive={isActive}
+                      className={`h-12 rounded-xl px-4 transition-all duration-300 ${
+                        isActive 
+                        ? 'bg-primary/10 text-primary border border-primary/20' 
+                        : 'hover:bg-white/5 text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      <Link href={item.href}>
+                        <item.icon className={`w-5 h-5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <span className="font-bold uppercase text-xs tracking-widest ml-3">{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
