@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, Settings, Plus, Trophy, BarChart3 } from "lucide-react"
+import { Home, Settings, Plus, Trophy, Calculator } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -19,7 +19,7 @@ export function Navigation({ activeTab, onTabChange }: { activeTab: string, onTa
         className="max-w-md mx-auto glass-panel rounded-[2rem] p-3 flex items-center justify-around relative vigilant-scan shadow-[0_-8px_32px_0_rgba(0,0,0,0.4)]"
       >
         <NavButton active={activeTab === 'dashboard'} icon={Home} label="Home" onClick={() => onTabChange('dashboard')} />
-        <NavButton active={activeTab === 'performance'} icon={BarChart3} label="Stats" onClick={() => onTabChange('performance')} />
+        <NavButton active={activeTab === 'calculator'} icon={Calculator} label="Calc" onClick={() => onTabChange('calculator')} />
         
         <div className="relative -top-8">
           <motion.div

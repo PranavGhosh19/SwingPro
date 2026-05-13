@@ -11,6 +11,7 @@ import { AddRoundForm } from "@/components/AddRoundForm"
 import { FeedsView } from "@/components/FeedsView"
 import { CompeteView } from "@/components/CompeteView"
 import { PerformanceView } from "@/components/PerformanceView"
+import { CourseCalculator } from "@/components/CourseCalculator"
 import { UserProfile } from "@/lib/db"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
@@ -33,7 +34,8 @@ import {
   Sparkles,
   Loader2,
   Activity,
-  ShieldCheck
+  ShieldCheck,
+  Calculator
 } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { 
@@ -190,7 +192,6 @@ export default function App() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-background relative overflow-hidden">
-        {/* Background visual elements */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,128,0.05),transparent_70%)]" />
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
         
@@ -310,14 +311,11 @@ export default function App() {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background text-foreground font-body selection:bg-primary/30 overflow-x-hidden relative">
-        {/* Persistent background scan effect */}
         <div className="fixed inset-0 pointer-events-none z-0 opacity-5 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(0,255,128,0.02),rgba(0,192,255,0.02))] bg-[length:100%_4px,4px_100%]" />
 
-        {/* Desktop Sidebar */}
         <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
         <SidebarInset className="flex-1 bg-transparent relative z-10">
-          {/* Mobile Header */}
           <header className="p-6 sticky top-0 bg-background/60 backdrop-blur-xl z-50 border-b border-white/5 md:hidden">
             <div className="max-w-3xl mx-auto flex items-center justify-between">
               <div className="flex flex-col">
@@ -359,6 +357,7 @@ export default function App() {
                 {activeTab === 'feeds' && <FeedsView />}
                 {activeTab === 'add' && <AddRoundForm onComplete={refreshData} />}
                 {activeTab === 'compete' && <CompeteView />}
+                {activeTab === 'calculator' && <CourseCalculator />}
 
                 {activeTab === 'settings' && (
                   <div className="space-y-10">
