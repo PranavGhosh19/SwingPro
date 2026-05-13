@@ -70,7 +70,7 @@ export function AppSidebar({ activeTab, onTabChange }: { activeTab: string, onTa
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-2">Elite Analytics v2.0</p>
         </div>
       </SidebarHeader>
-      <SidebarContent className="px-4">
+      <SidebarContent className="px-4 modern-scrollbar">
         <SidebarGroup>
           <SidebarGroupLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4">Operations</SidebarGroupLabel>
           <SidebarGroupContent>

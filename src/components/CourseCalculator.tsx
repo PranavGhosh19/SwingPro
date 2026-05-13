@@ -66,59 +66,59 @@ export function CourseCalculator() {
             animate={{ opacity: 1, y: 0 }}
             className="glass-panel rounded-[2.5rem] p-10 relative overflow-hidden vigilant-scan"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 mb-1">
-                  <ShieldCheck className="w-3 h-3 text-primary" />
-                  <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Handicap Index</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-primary" />
+                  <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground leading-none">Handicap Index</Label>
                 </div>
                 <Input 
                   type="number" 
                   step="0.1" 
                   value={handicapIndex} 
                   onChange={e => setHandicapIndex(Number(e.target.value))}
-                  className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter focus:ring-primary/50"
+                  className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter focus:ring-primary/50 transition-all"
                 />
-                <p className="text-[9px] text-muted-foreground font-medium italic">Auto-sync with performance history.</p>
+                <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest italic ml-1">Auto-sync with history</p>
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 mb-1">
-                  <Target className="w-3 h-3 text-accent" />
-                  <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Course Slope</Label>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Target className="w-4 h-4 text-accent" />
+                  <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground leading-none">Course Slope</Label>
                 </div>
                 <Input 
                   type="number" 
                   value={slope} 
                   onChange={e => setSlope(Number(e.target.value))}
-                  className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter"
+                  className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter transition-all"
                 />
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 mb-1">
-                  <Activity className="w-3 h-3 text-primary" />
-                  <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Course Rating</Label>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-primary" />
+                  <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground leading-none">Course Rating</Label>
                 </div>
                 <Input 
                   type="number" 
                   step="0.1" 
                   value={courseRating} 
                   onChange={e => setCourseRating(Number(e.target.value))}
-                  className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter"
+                  className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter transition-all"
                 />
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 mb-1">
-                  <Calculator className="w-3 h-3 text-accent" />
-                  <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Course Par</Label>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Calculator className="w-4 h-4 text-accent" />
+                  <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground leading-none">Course Par</Label>
                 </div>
                 <Input 
                   type="number" 
                   value={par} 
                   onChange={e => setPar(Number(e.target.value))}
-                  className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter"
+                  className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter transition-all"
                 />
               </div>
             </div>

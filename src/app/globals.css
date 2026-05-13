@@ -68,6 +68,29 @@
   }
 }
 
+@layer utilities {
+  .modern-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  .modern-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .modern-scrollbar::-webkit-scrollbar-thumb {
+    background: hsla(var(--primary), 0.15);
+    border-radius: 10px;
+    transition: all 0.2s;
+  }
+  .modern-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsla(var(--primary), 0.4);
+  }
+  /* Firefox */
+  .modern-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsla(var(--primary), 0.15) transparent;
+  }
+}
+
 .glass-panel {
   @apply bg-card/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
 }
