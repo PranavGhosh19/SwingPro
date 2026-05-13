@@ -1,21 +1,41 @@
+
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { getRounds, calculateHandicap, Round } from "@/lib/db"
+import { calculateHandicap, type Round } from "@/lib/db"
 import { useEffect, useState } from "react"
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid } from "recharts"
+import { useUser, useFirestore, useCollection } from "@/firebase"
+import { collection, query, orderBy, limit } from "firebase/firestore"
+import { useMemoFirebase } from "@/firebase/firestore/use-collection"
 
 export function HandicapChart() {
+  const { user } = useUser();
+  const db = useFirestore();
+
+  const roundsQuery = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return query(
+      collection(db, 'users', user.uid, 'rounds'),
+      orderBy('date', 'asc'), // Ascending for chronological trend
+      limit(20)
+    );
+  }, [db, user]);
+
+  const { data: roundsData } = useCollection(roundsQuery);
   const [chartData, setChartData] = useState<{ date: string; handicap: number }[]>([]);
 
   useEffect(() => {
-    const rounds = getRounds().reverse(); // Chronological order
+    if (!roundsData) return;
+    
+    const rounds = roundsData as Round[];
     const data: { date: string; handicap: number }[] = [];
     
     for (let i = 0; i < rounds.length; i++) {
-      const currentRounds = rounds.slice(0, i + 1).reverse(); // Most recent first for calculator
-      const hcp = calculateHandicap(currentRounds);
+      // Calculate handicap using rounds up to this point in time
+      const currentRoundsSnapshot = rounds.slice(0, i + 1).reverse();
+      const hcp = calculateHandicap(currentRoundsSnapshot);
       if (hcp !== null) {
         data.push({
           date: new Date(rounds[i].date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
@@ -24,20 +44,20 @@ export function HandicapChart() {
       }
     }
     setChartData(data);
-  }, []);
+  }, [roundsData]);
 
   if (chartData.length < 2) return null;
 
   return (
-    <Card className="col-span-1 lg:col-span-2">
+    <Card className="col-span-1 lg:col-span-2 bg-card border-white/5">
       <CardHeader>
-        <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Handicap Trend</CardTitle>
+        <CardTitle className="text-sm font-black text-muted-foreground uppercase tracking-widest">Handicap Protocol Trend</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[200px] w-full">
+        <div className="h-[240px] w-full">
           <ChartContainer config={{
             handicap: {
-              label: "Handicap Index",
+              label: "Index",
               color: "hsl(var(--primary))",
             }
           }}>
@@ -47,16 +67,18 @@ export function HandicapChart() {
                 <XAxis 
                   dataKey="date" 
                   stroke="#888888" 
-                  fontSize={12} 
+                  fontSize={10} 
                   tickLine={false} 
                   axisLine={false} 
+                  dy={10}
                 />
                 <YAxis 
                   stroke="#888888" 
-                  fontSize={12} 
+                  fontSize={10} 
                   tickLine={false} 
                   axisLine={false} 
                   domain={['auto', 'auto']}
+                  dx={-10}
                 />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Line
@@ -64,7 +86,7 @@ export function HandicapChart() {
                   dataKey="handicap"
                   stroke="hsl(var(--primary))"
                   strokeWidth={3}
-                  dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                  dot={{ fill: "hsl(var(--primary))", r: 4, strokeWidth: 2, stroke: "#000" }}
                   activeDot={{ r: 6, strokeWidth: 0 }}
                 />
               </LineChart>

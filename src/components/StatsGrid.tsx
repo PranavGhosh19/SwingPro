@@ -1,11 +1,30 @@
+
 "use client"
 
-import { getRounds, type Round } from "@/lib/db"
+import { type Round } from "@/lib/db"
 import { useEffect, useState } from "react"
 import { Activity, Target, Zap, CircleDashed, Radar } from "lucide-react"
 import { motion } from "framer-motion"
+import { useUser, useFirestore, useCollection } from "@/firebase"
+import { collection, query, orderBy, limit } from "firebase/firestore"
+import { useMemoFirebase } from "@/firebase/firestore/use-collection"
 
 export function StatsGrid() {
+  const { user } = useUser();
+  const db = useFirestore();
+
+  const roundsQuery = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return query(
+      collection(db, 'users', user.uid, 'rounds'),
+      orderBy('date', 'desc'),
+      limit(20)
+    );
+  }, [db, user]);
+
+  const { data: roundsData } = useCollection(roundsQuery);
+  const rounds = (roundsData || []) as Round[];
+
   const [stats, setStats] = useState({
     avgGross: 0,
     avgPutts: 0,
@@ -15,7 +34,6 @@ export function StatsGrid() {
   });
 
   useEffect(() => {
-    const rounds = getRounds();
     if (rounds.length === 0) return;
 
     const sum = rounds.reduce((acc, r) => ({
@@ -32,7 +50,7 @@ export function StatsGrid() {
       avgFairways: Number((sum.fwy / rounds.length).toFixed(1)),
       roundsCount: rounds.length
     });
-  }, []);
+  }, [rounds]);
 
   const items = [
     { label: "Avg Score", value: stats.avgGross, icon: Activity, color: "text-primary", bg: "bg-primary/10" },
@@ -98,7 +116,6 @@ export function StatsGrid() {
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{item.label}</p>
           </div>
 
-          {/* HUD decorative elements */}
           <div className="absolute bottom-2 right-2 flex gap-0.5 opacity-20 group-hover:opacity-100 transition-opacity">
             {[1, 2, 3].map(j => (
               <div key={j} className="w-1 h-3 bg-white/20 rounded-full" />

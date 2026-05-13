@@ -48,12 +48,16 @@ export interface Round {
   date: string;
   courseName: string;
   grossScore: number;
-  putts?: number;
-  gir?: number;
-  fir?: number;
   courseRating: number;
   slopeRating: number;
   par: number;
+  puttsPerRound?: number;
+  girPercentage?: number;
+  fairwaysHitPercentage?: number;
+  averageDrivingDistance?: number;
+  threePuttPercentage?: number;
+  scramblingPercentage?: number;
+  missDirection?: string;
 }
 
 export function calculateDifferential(round: Round): number {
