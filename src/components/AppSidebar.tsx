@@ -12,7 +12,8 @@ import {
   LogOut,
   Calculator,
   Flag,
-  Users
+  Users,
+  CheckCircle2
 } from "lucide-react"
 
 import {
@@ -56,7 +57,7 @@ export function AppSidebar() {
   const clubItems = [
     { href: '/dashboard', icon: Home, label: 'Ops Hub' },
     { href: '/tournaments', icon: Trophy, label: 'Tournaments' },
-    { href: '/members', icon: Users, label: 'Members' },
+    { href: '/members', icon: Users, label: 'Member CRM' },
     { href: '/settings', icon: Settings, label: 'Settings' },
   ];
 
@@ -64,6 +65,7 @@ export function AppSidebar() {
     { href: '/dashboard', icon: Home, label: 'Dashboard' },
     { href: '/performance', icon: BarChart3, label: 'Performance' },
     { href: '/calculator', icon: Calculator, label: 'Course HCP' },
+    { href: '/scorecard', icon: CheckCircle2, label: 'Live Scoring' },
     { href: '/compete', icon: Trophy, label: 'Competition' },
     { href: '/add-round', icon: Plus, label: 'Record Round' },
     { href: '/settings', icon: Settings, label: 'Settings' },
