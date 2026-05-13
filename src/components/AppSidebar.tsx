@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -95,21 +96,6 @@ export function AppSidebar({ activeTab, onTabChange }: { activeTab: string, onTa
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="p-6 border-t border-white/5">
-        <div className="flex items-center gap-4 mb-6 px-2">
-          <Avatar className="w-10 h-10 border border-primary/30 neon-glow">
-            <AvatarFallback className="bg-primary/20 text-primary font-black">
-              {userProfile?.fullName?.[0] || 'P'}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col">
-            <span className="text-sm font-black uppercase italic tracking-tight truncate max-w-[120px]">
-              {userProfile?.fullName || 'Player'}
-            </span>
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-              LVL {userProfile?.level || 1} PRO
-            </span>
-          </div>
-        </div>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton 
