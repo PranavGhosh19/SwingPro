@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useUser, useFirestore, useCollection } from "@/firebase"
@@ -51,7 +50,7 @@ export function CourseCalculator() {
     <div className="space-y-10">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h2 className="text-3xl font-black tracking-tight uppercase italic">Stroke Calculator</h2>
+          <h2 className="text-3xl font-black tracking-tight uppercase italic text-foreground">Stroke Calculator</h2>
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em]">Handicap Optimization Protocol</p>
         </div>
         <div className="bg-primary/20 px-4 py-1.5 rounded-full border border-primary/30 neon-glow flex items-center gap-2">
@@ -67,64 +66,60 @@ export function CourseCalculator() {
             animate={{ opacity: 1, y: 0 }}
             className="glass-panel rounded-[2.5rem] p-10 relative overflow-hidden vigilant-scan"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 mb-1">
-                    <ShieldCheck className="w-3 h-3 text-primary" />
-                    <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Handicap Index</Label>
-                  </div>
-                  <Input 
-                    type="number" 
-                    step="0.1" 
-                    value={handicapIndex} 
-                    onChange={e => setHandicapIndex(Number(e.target.value))}
-                    className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter focus:ring-primary/50"
-                  />
-                  <p className="text-[9px] text-muted-foreground font-medium italic">Calculated automatically from your last 20 rounds.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <ShieldCheck className="w-3 h-3 text-primary" />
+                  <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Handicap Index</Label>
                 </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Target className="w-3 h-3 text-accent" />
-                    <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Course Slope Rating</Label>
-                  </div>
-                  <Input 
-                    type="number" 
-                    value={slope} 
-                    onChange={e => setSlope(Number(e.target.value))}
-                    className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter"
-                  />
-                </div>
+                <Input 
+                  type="number" 
+                  step="0.1" 
+                  value={handicapIndex} 
+                  onChange={e => setHandicapIndex(Number(e.target.value))}
+                  className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter focus:ring-primary/50"
+                />
+                <p className="text-[9px] text-muted-foreground font-medium italic">Auto-sync with performance history.</p>
               </div>
 
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Activity className="w-3 h-3 text-primary" />
-                    <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Course Rating</Label>
-                  </div>
-                  <Input 
-                    type="number" 
-                    step="0.1" 
-                    value={courseRating} 
-                    onChange={e => setCourseRating(Number(e.target.value))}
-                    className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter"
-                  />
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <Target className="w-3 h-3 text-accent" />
+                  <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Course Slope</Label>
                 </div>
+                <Input 
+                  type="number" 
+                  value={slope} 
+                  onChange={e => setSlope(Number(e.target.value))}
+                  className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter"
+                />
+              </div>
 
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Calculator className="w-3 h-3 text-accent" />
-                    <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Course Par</Label>
-                  </div>
-                  <Input 
-                    type="number" 
-                    value={par} 
-                    onChange={e => setPar(Number(e.target.value))}
-                    className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter"
-                  />
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <Activity className="w-3 h-3 text-primary" />
+                  <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Course Rating</Label>
                 </div>
+                <Input 
+                  type="number" 
+                  step="0.1" 
+                  value={courseRating} 
+                  onChange={e => setCourseRating(Number(e.target.value))}
+                  className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <Calculator className="w-3 h-3 text-accent" />
+                  <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Course Par</Label>
+                </div>
+                <Input 
+                  type="number" 
+                  value={par} 
+                  onChange={e => setPar(Number(e.target.value))}
+                  className="h-16 bg-white/5 border-white/10 rounded-2xl text-2xl font-black italic tracking-tighter"
+                />
               </div>
             </div>
             
@@ -134,9 +129,9 @@ export function CourseCalculator() {
           <div className="bg-primary/5 rounded-[2rem] p-6 border border-primary/10 flex items-start gap-4">
             <Info className="w-5 h-5 text-primary shrink-0 mt-1" />
             <div className="space-y-1">
-              <h4 className="text-xs font-black uppercase tracking-tight">Protocol Note</h4>
+              <h4 className="text-xs font-black uppercase tracking-tight">Calculation Protocol</h4>
               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                This calculation uses the USGA/R&A standard formula. Your playing handicap accounts for the relative difficulty of the course (Slope) and the difference between the Course Rating and Par.
+                Playing strokes are determined using standard WHS formulas: Index × (Slope / 113) + (Rating - Par).
               </p>
             </div>
           </div>
@@ -167,11 +162,11 @@ export function CourseCalculator() {
               </div>
             </div>
             
-            <p className="text-sm font-black italic uppercase text-muted-foreground mt-8">Strokes vs Course</p>
+            <p className="text-sm font-black italic uppercase text-muted-foreground mt-8">Allowed on Course</p>
             
             <div className="mt-10 pt-10 border-t border-white/5 w-full space-y-4">
               <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                <span>Calc Confidence</span>
+                <span>Precision Rating</span>
                 <span className="text-primary">99.9%</span>
               </div>
               <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
