@@ -4,25 +4,36 @@
 
 @layer base {
   :root {
-    --background: 230 20% 4%;
-    --foreground: 0 0% 98%;
-    --card: 230 20% 7%;
-    --card-foreground: 0 0% 98%;
-    --popover: 230 20% 5%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 160 84% 39%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 230 15% 15%;
+    /* Primary: Light Blue (#81C4FF) -> HSL(208, 100%, 75%) */
+    --primary: 208 100% 75%;
+    --primary-foreground: 208 100% 10%;
+    
+    /* Secondary: Deep Blue (#16588E) -> HSL(207, 73%, 32%) */
+    --secondary: 207 73% 32%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 230 15% 15%;
-    --muted-foreground: 230 5% 70%;
-    --accent: 191 91% 50%;
-    --accent-foreground: 230 20% 5%;
-    --destructive: 0 84% 60%;
+    
+    /* Accent: Racing Red (#E7222E) -> HSL(356, 80%, 52%) */
+    --accent: 356 80% 52%;
+    --accent-foreground: 0 0% 100%;
+
+    --background: 207 60% 4%;
+    --foreground: 0 0% 98%;
+    
+    --card: 207 50% 7%;
+    --card-foreground: 0 0% 98%;
+    
+    --popover: 207 60% 5%;
+    --popover-foreground: 0 0% 98%;
+    
+    --muted: 207 30% 15%;
+    --muted-foreground: 207 10% 70%;
+    
+    --destructive: 356 80% 52%;
     --destructive-foreground: 0 0% 98%;
-    --border: 230 15% 15%;
-    --input: 230 15% 15%;
-    --ring: 160 84% 39%;
+    
+    --border: 207 30% 15%;
+    --input: 207 30% 15%;
+    --ring: 208 100% 75%;
     --radius: 1rem;
   }
 }
@@ -36,7 +47,7 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     background-image: 
       radial-gradient(circle at 50% 0%, hsla(var(--primary), 0.15), transparent 50%),
-      radial-gradient(circle at 0% 100%, hsla(var(--accent), 0.1), transparent 40%);
+      radial-gradient(circle at 0% 100%, hsla(var(--secondary), 0.1), transparent 40%);
     background-attachment: fixed;
   }
 
@@ -49,7 +60,7 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.04));
     z-index: 1000;
     background-size: 100% 4px, 3px 100%;
     pointer-events: none;
@@ -69,8 +80,12 @@
   text-shadow: 0 0 10px hsla(var(--primary), 0.5);
 }
 
+.accent-glow {
+  box-shadow: 0 0 20px -5px hsla(var(--accent), 0.5);
+}
+
 .futuristic-gradient {
-  background: linear-gradient(135deg, hsla(var(--primary), 0.2) 0%, hsla(var(--accent), 0.2) 100%);
+  background: linear-gradient(135deg, hsla(var(--primary), 0.2) 0%, hsla(var(--secondary), 0.2) 100%);
 }
 
 @keyframes scanline {
