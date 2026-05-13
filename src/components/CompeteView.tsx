@@ -138,7 +138,7 @@ export function CompeteView() {
                 </motion.div>
               ))}
               <Button className="w-full h-14 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-muted-foreground font-black uppercase text-[10px] tracking-widest">
-                Create New League
+                Create New League or Tournament
               </Button>
             </TabsContent>
           )}
