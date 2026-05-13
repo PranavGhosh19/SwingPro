@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "UserProfile": {
@@ -12,13 +13,6 @@
         "xp": { "type": "number" },
         "level": { "type": "number" },
         "badges": { "type": "array", "items": { "type": "string" } },
-        "streaks": {
-          "type": "object",
-          "properties": {
-            "weeksActive": { "type": "number" },
-            "challengesJoined": { "type": "number" }
-          }
-        },
         "metrics": {
           "type": "object",
           "properties": {
@@ -30,35 +24,56 @@
       },
       "required": ["fullName", "email", "role"]
     },
+    "Course": {
+      "title": "Course",
+      "description": "Golf course configuration and tee data",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "location": { "type": "string" },
+        "tees": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "color": { "type": "string" },
+              "rating": { "type": "number" },
+              "slope": { "type": "number" },
+              "par": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "Tournament": {
+      "title": "Tournament",
+      "description": "Club-hosted tournament event",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "clubId": { "type": "string" },
+        "format": { "type": "string", "enum": ["stroke", "stableford", "match", "scramble"] },
+        "status": { "type": "string", "enum": ["upcoming", "active", "completed"] },
+        "startDate": { "type": "string", "format": "date" },
+        "endDate": { "type": "string", "format": "date" },
+        "participants": { "type": "array", "items": { "type": "string" } }
+      }
+    },
     "Round": {
       "title": "Round",
-      "description": "Comprehensive golf round performance data",
+      "description": "Golf round performance data",
       "type": "object",
       "properties": {
         "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "tournamentId": { "type": "string" },
         "date": { "type": "string", "format": "date" },
         "courseName": { "type": "string" },
-        "courseRating": { "type": "number" },
-        "slopeRating": { "type": "number" },
-        "par": { "type": "number" },
         "grossScore": { "type": "number" },
-        "puttsPerRound": { "type": "number" },
-        "fairwaysHitPercentage": { "type": "number" },
-        "girPercentage": { "type": "number" },
-        "scramblingPercentage": { "type": "number" },
-        "threePuttPercentage": { "type": "number" },
-        "missDirection": { "type": "string", "enum": ["left", "right", "straight", "N/A"] },
-        "strokesGained": {
-          "type": "object",
-          "properties": {
-            "tee": { "type": "number" },
-            "approach": { "type": "number" },
-            "short": { "type": "number" },
-            "putting": { "type": "number" }
-          }
-        }
-      },
-      "required": ["date", "courseName", "grossScore", "par"]
+        "putts": { "type": "number" },
+        "gir": { "type": "number" },
+        "fir": { "type": "number" }
+      }
     }
   },
   "auth": {
@@ -67,11 +82,19 @@
   "firestore": {
     "/users/{userId}": {
       "schema": "UserProfile",
-      "description": "Root user profile document"
+      "description": "Root user profile"
+    },
+    "/courses/{courseId}": {
+      "schema": "Course",
+      "description": "Course infrastructure data"
+    },
+    "/tournaments/{tournamentId}": {
+      "schema": "Tournament",
+      "description": "Active and archived tournaments"
     },
     "/users/{userId}/rounds/{roundId}": {
       "schema": "Round",
-      "description": "Collection of golf rounds for a specific user"
+      "description": "Player performance history"
     }
   }
 }
