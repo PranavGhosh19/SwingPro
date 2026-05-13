@@ -55,7 +55,6 @@ export function AppSidebar({ activeTab, onTabChange }: { activeTab: string, onTa
     { id: 'performance', icon: BarChart3, label: 'Performance' },
     { id: 'calculator', icon: Calculator, label: 'Course HCP' },
     { id: 'compete', icon: Trophy, label: 'Competition' },
-    { id: 'feeds', icon: Users, label: 'Social Feed' },
     { id: 'add', icon: Plus, label: 'Record Round' },
     { id: 'settings', icon: Settings, label: 'Player Protocol' },
   ];

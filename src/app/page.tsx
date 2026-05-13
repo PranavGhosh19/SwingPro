@@ -8,7 +8,6 @@ import { StatsGrid } from "@/components/StatsGrid"
 import { HandicapChart } from "@/components/HandicapChart"
 import { RecentRounds } from "@/components/RecentRounds"
 import { AddRoundForm } from "@/components/AddRoundForm"
-import { FeedsView } from "@/components/FeedsView"
 import { CompeteView } from "@/components/CompeteView"
 import { PerformanceView } from "@/components/PerformanceView"
 import { CourseCalculator } from "@/components/CourseCalculator"
@@ -173,12 +172,7 @@ export default function App() {
   };
 
   const handleSwipe = (event: any, info: any) => {
-    if (isMobile && activeTab === 'dashboard' && info.offset.x > 100) {
-      setActiveTab('feeds');
-    }
-    if (isMobile && activeTab === 'feeds' && info.offset.x < -100) {
-      setActiveTab('dashboard');
-    }
+    // Swipe gestures can be updated or removed if they depended on feeds
   };
 
   if (authLoading) {
@@ -354,7 +348,6 @@ export default function App() {
                 )}
 
                 {activeTab === 'performance' && <PerformanceView />}
-                {activeTab === 'feeds' && <FeedsView />}
                 {activeTab === 'add' && <AddRoundForm onComplete={refreshData} />}
                 {activeTab === 'compete' && <CompeteView />}
                 {activeTab === 'calculator' && <CourseCalculator />}
