@@ -33,7 +33,6 @@ import { UserProfile } from "@/lib/db"
 import { doc } from "firebase/firestore"
 import { useFirestore } from "@/firebase"
 import { useMemoFirebase } from "@/firebase/firestore/use-collection"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export function AppSidebar({ activeTab, onTabChange }: { activeTab: string, onTabChange: (tab: string) => void }) {
   const auth = useAuth();
@@ -51,13 +50,15 @@ export function AppSidebar({ activeTab, onTabChange }: { activeTab: string, onTa
     if (auth) signOut(auth);
   };
 
+  const isClub = userProfile?.role === 'club';
+
   const menuItems = [
-    { id: 'dashboard', icon: Home, label: 'Dashboard' },
+    { id: 'dashboard', icon: Home, label: isClub ? 'Operations' : 'Dashboard' },
     { id: 'performance', icon: BarChart3, label: 'Performance' },
     { id: 'calculator', icon: Calculator, label: 'Course HCP' },
     { id: 'compete', icon: Trophy, label: 'Competition' },
     { id: 'add', icon: Plus, label: 'Record Round' },
-    { id: 'settings', icon: Settings, label: 'Player Protocol' },
+    { id: 'settings', icon: Settings, label: 'Settings' },
   ];
 
   return (

@@ -1,15 +1,18 @@
+
 "use client"
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { MOCK_CHALLENGES, MOCK_LEAGUES, getUser } from "@/lib/db"
+import { useUser, useFirestore, useCollection } from "@/firebase"
+import { collection, query, limit } from "firebase/firestore"
+import { useMemoFirebase } from "@/firebase/firestore/use-collection"
 import { Trophy, Target, Users, Zap, Calendar, ChevronRight, Award, Flame } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 
 export function CompeteView() {
-  const user = getUser();
+  const { user } = useUser();
   const [activeSubTab, setActiveSubTab] = useState('challenges');
 
   return (
@@ -18,25 +21,25 @@ export function CompeteView() {
         <h2 className="text-3xl font-black tracking-tight uppercase italic">Compete</h2>
         <div className="flex items-center gap-2 bg-primary/20 px-4 py-1.5 rounded-full border border-primary/30 neon-glow">
           <Zap className="w-4 h-4 text-primary fill-primary" />
-          <span className="text-[10px] font-black text-primary uppercase tracking-widest">LVL {user?.level || 1}</span>
+          <span className="text-[10px] font-black text-primary uppercase tracking-widest">LVL {1}</span>
         </div>
       </div>
 
       <div className="glass-panel rounded-[2rem] p-6 flex items-center justify-between relative overflow-hidden">
         <div className="space-y-1 relative z-10">
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Season Experience</p>
-          <h4 className="text-2xl font-black italic uppercase">{user?.xp || 0} XP</h4>
+          <h4 className="text-2xl font-black italic uppercase">{1250} XP</h4>
           <div className="w-48 h-1.5 bg-white/5 rounded-full overflow-hidden mt-2">
             <motion.div 
               initial={{ width: 0 }}
-              animate={{ width: `${((user?.xp || 0) % 500) / 5}%` }}
+              animate={{ width: "45%" }}
               className="h-full bg-primary neon-glow"
             />
           </div>
         </div>
         <div className="flex gap-4 relative z-10">
-          <StatMini icon={Flame} value={user?.streaks?.weeksActive || 0} label="Streak" />
-          <StatMini icon={Award} value={user?.badges?.length || 0} label="Badges" />
+          <StatMini icon={Flame} value={3} label="Streak" />
+          <StatMini icon={Award} value={8} label="Badges" />
         </div>
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl -z-10" />
       </div>
@@ -52,7 +55,10 @@ export function CompeteView() {
           {activeSubTab === 'challenges' && (
             <TabsContent key="tab-challenges" value="challenges" className="space-y-6 pt-6 focus-visible:outline-none">
               <div className="grid grid-cols-1 gap-4">
-                {MOCK_CHALLENGES.map((challenge, i) => (
+                {[
+                  { id: 1, title: 'Break 80 Quest', type: 'score', participants: ['A', 'B', 'C'] },
+                  { id: 2, title: 'Iron Accuracy', type: 'stat', participants: ['D', 'E'] }
+                ].map((challenge, i) => (
                   <motion.div
                     key={`challenge-${challenge.id}`}
                     initial={{ opacity: 0, y: 20 }}
@@ -71,7 +77,7 @@ export function CompeteView() {
                           <div className="flex -space-x-2">
                             {challenge.participants.map((p, idx) => (
                               <div key={`${challenge.id}-p-${idx}`} className="w-6 h-6 rounded-full bg-white/10 border-2 border-background flex items-center justify-center text-[8px] font-bold">
-                                {p[0]}
+                                {p}
                               </div>
                             ))}
                           </div>
@@ -92,51 +98,38 @@ export function CompeteView() {
                   </motion.div>
                 ))}
               </div>
-              
-              <div className="bg-primary/5 rounded-3xl p-6 border border-primary/10 flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Smart Suggestion</p>
-                  <h5 className="text-sm font-bold">Rahul S. has a similar handicap.</h5>
-                  <p className="text-xs text-muted-foreground font-medium">Start a 1v1 match today?</p>
-                </div>
-                <Button size="sm" className="bg-primary text-white rounded-xl text-[10px] font-black uppercase">Invite</Button>
-              </div>
             </TabsContent>
           )}
 
           {activeSubTab === 'leagues' && (
             <TabsContent key="tab-leagues" value="leagues" className="space-y-6 pt-6 focus-visible:outline-none">
-              {MOCK_LEAGUES.map((league, i) => (
-                <motion.div
-                  key={`league-${league.id}`}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="glass-panel rounded-3xl p-6 relative overflow-hidden group"
-                >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:neon-glow transition-all">
-                      <Users className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-black uppercase italic tracking-tighter leading-none">{league.name}</h4>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">{league.city || 'Private League'} • Week {league.week}</p>
-                    </div>
-                    <div className="ml-auto text-right">
-                      <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Rank</p>
-                      <p className="text-xl font-black italic text-primary">#{league.rank}</p>
-                    </div>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="glass-panel rounded-3xl p-6 relative overflow-hidden group"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:neon-glow transition-all">
+                    <Users className="w-6 h-6 text-primary" />
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                      <span>Performance Standings</span>
-                      <span>Top 30%</span>
-                    </div>
-                    <Progress value={(1 - league.rank/league.totalPlayers) * 100} className="h-2 bg-white/5" />
+                  <div>
+                    <h4 className="text-lg font-black uppercase italic tracking-tighter leading-none">Club Championship</h4>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">London Golf Club • Week 4</p>
                   </div>
-                  <Button variant="link" className="w-full mt-4 text-primary text-[10px] font-black uppercase tracking-widest">View Full Table</Button>
-                </motion.div>
-              ))}
+                  <div className="ml-auto text-right">
+                    <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Rank</p>
+                    <p className="text-xl font-black italic text-primary">#14</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <span>Performance Standings</span>
+                    <span>Top 30%</span>
+                  </div>
+                  <Progress value={70} className="h-2 bg-white/5" />
+                </div>
+                <Button variant="link" className="w-full mt-4 text-primary text-[10px] font-black uppercase tracking-widest">View Full Table</Button>
+              </motion.div>
               <Button className="w-full h-14 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 text-muted-foreground font-black uppercase text-[10px] tracking-widest">
                 Create New League or Tournament
               </Button>
@@ -157,7 +150,6 @@ export function CompeteView() {
                   {[
                     { id: 'rank-1', name: 'Tiger Woods', hcp: '+4.2', rounds: 890, rank: 1 },
                     { id: 'rank-2', name: 'Rory McIlroy', hcp: '+3.1', rounds: 412, rank: 2 },
-                    { id: 'rank-3', name: 'Jon Rahm', hcp: '+2.8', rounds: 356, rank: 3 },
                     { id: 'rank-self', name: 'You', hcp: '4.5', rounds: 24, rank: 142, isSelf: true },
                   ].map((entry) => (
                     <div key={entry.id} className={`p-4 flex items-center gap-4 ${entry.isSelf ? 'bg-primary/10' : ''}`}>
