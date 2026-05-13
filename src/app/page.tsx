@@ -22,7 +22,9 @@ import {
   Loader2,
   Mail,
   Lock,
-  Calculator
+  Calculator,
+  Building2,
+  User as UserIcon
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -48,16 +50,19 @@ import { CompeteView } from "@/components/CompeteView"
 import { UserProfile } from "@/lib/db"
 import { errorEmitter } from '@/firebase/error-emitter'
 import { FirestorePermissionError } from '@/firebase/errors'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function App() {
   const { user, loading: authLoading } = useUser();
   const [showApp, setShowApp] = useState(false);
   const [authView, setAuthView] = useState<'signin' | 'signup' | 'onboarding'>('signin');
+  const [authRole, setAuthRole] = useState<'golfer' | 'club'>('golfer');
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [clubName, setClubName] = useState('');
   const { toast } = useToast();
   const auth = useAuth();
   const db = useFirestore();
@@ -84,7 +89,9 @@ export default function App() {
       toast({
         variant: "destructive",
         title: "Access Denied",
-        description: "Invalid credentials. Please verify your identity.",
+        description: error.code === 'auth/invalid-credential' 
+          ? "Invalid net credentials. Please verify your access key." 
+          : "Authentication system failure. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -114,8 +121,10 @@ export default function App() {
     if (!db || !user) return;
     setLoading(true);
     const newUser: UserProfile = { 
+      role: authRole,
       email: user.email!, 
-      fullName,
+      fullName: authRole === 'club' ? 'Club Admin' : fullName,
+      clubName: authRole === 'club' ? clubName : '',
       xp: 0,
       level: 1,
       badges: [],
@@ -155,10 +164,25 @@ export default function App() {
                 <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
                   {activeTab === 'dashboard' && (
                     <div className="space-y-10">
-                      <HandicapDisplay />
-                      <StatsGrid />
-                      <HandicapChart />
-                      <RecentRounds refreshTrigger={0} />
+                      {userProfile.role === 'golfer' ? (
+                        <>
+                          <HandicapDisplay />
+                          <StatsGrid />
+                          <HandicapChart />
+                          <RecentRounds refreshTrigger={0} />
+                        </>
+                      ) : (
+                        <div className="space-y-10">
+                          <div className="glass-panel p-10 rounded-[2.5rem] space-y-4">
+                            <h2 className="text-4xl font-black italic uppercase tracking-tighter">{userProfile.clubName} <span className="text-primary text-xl">Command Hub</span></h2>
+                            <p className="text-muted-foreground">Tournament hosting and player verification engine.</p>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FeatureCard icon={Trophy} title="Active Events" desc="Manage ongoing tournaments and live field telemetry." />
+                            <FeatureCard icon={Users} title="Member Roster" desc="Verification and handicap audit protocols for members." />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                   {activeTab === 'performance' && <PerformanceView />}
@@ -170,8 +194,8 @@ export default function App() {
                       <h2 className="text-3xl font-black uppercase italic tracking-tighter">Player Protocol</h2>
                       <div className="glass-panel rounded-[2rem] p-10 space-y-4">
                         <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Active Identity</p>
-                        <h3 className="text-4xl font-black italic">{userProfile.fullName}</h3>
-                        <p className="text-primary font-bold">{userProfile.email}</p>
+                        <h3 className="text-4xl font-black italic">{userProfile.role === 'club' ? userProfile.clubName : userProfile.fullName}</h3>
+                        <p className="text-primary font-bold">{userProfile.email} • {userProfile.role.toUpperCase()}</p>
                       </div>
                       <Button variant="outline" className="w-full h-16 rounded-2xl border-white/10 hover:bg-destructive/10 text-destructive" onClick={() => signOut(auth!)}>Terminate Session</Button>
                     </div>
@@ -192,40 +216,62 @@ export default function App() {
       <div className="min-h-screen flex items-center justify-center p-6 bg-background relative">
         <AnimatePresence mode="wait">
           {authView === 'signin' ? (
-            <motion.div key="in" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-sm glass-panel p-10 rounded-[2.5rem] space-y-8">
+            <motion.div key="in" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md glass-panel p-10 rounded-[2.5rem] space-y-8">
               <div className="text-center space-y-2">
                 <h1 className="text-4xl font-black tracking-tighter italic uppercase">SwingStats <span className="text-primary">Pro</span></h1>
                 <p className="text-[10px] uppercase tracking-[0.3em] font-black text-muted-foreground">Authorize Entry</p>
               </div>
+              
+              <Tabs defaultValue="golfer" onValueChange={(v) => setAuthRole(v as any)} className="w-full">
+                <TabsList className="grid w-full grid-cols-2 bg-white/5 h-12 rounded-xl mb-4">
+                  <TabsTrigger value="golfer" className="font-bold text-[10px] uppercase tracking-widest"><UserIcon className="w-3 h-3 mr-2" /> Golfer</TabsTrigger>
+                  <TabsTrigger value="club" className="font-bold text-[10px] uppercase tracking-widest"><Building2 className="w-3 h-3 mr-2" /> Club</TabsTrigger>
+                </TabsList>
+              </Tabs>
+
               <form onSubmit={handleSignIn} className="space-y-4">
                 <Input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className="h-14 rounded-xl bg-white/5" />
                 <Input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="h-14 rounded-xl bg-white/5" />
-                <Button type="submit" disabled={loading} className="w-full h-14 rounded-xl bg-primary text-white font-black uppercase">{loading ? <Loader2 className="animate-spin" /> : "Enter Dashboard"}</Button>
+                <Button type="submit" disabled={loading} className="w-full h-14 rounded-xl bg-primary text-white font-black uppercase tracking-widest">{loading ? <Loader2 className="animate-spin" /> : "Access System"}</Button>
               </form>
-              <button onClick={() => setAuthView('signup')} className="w-full text-[10px] uppercase font-black tracking-widest text-muted-foreground hover:text-primary transition-colors">Create Elite Profile</button>
+              <div className="text-center space-y-4">
+                <button onClick={() => setAuthView('signup')} className="text-[10px] uppercase font-black tracking-widest text-muted-foreground hover:text-primary transition-colors">Create Elite Account</button>
+              </div>
             </motion.div>
           ) : authView === 'signup' ? (
-            <motion.div key="up" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-sm glass-panel p-10 rounded-[2.5rem] space-y-8">
+            <motion.div key="up" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md glass-panel p-10 rounded-[2.5rem] space-y-8">
               <div className="text-center space-y-2">
-                <h1 className="text-4xl font-black tracking-tighter italic uppercase">Join <span className="text-primary">Elite</span></h1>
-                <p className="text-[10px] uppercase tracking-[0.3em] font-black text-muted-foreground">Register Identity</p>
+                <h1 className="text-4xl font-black tracking-tighter italic uppercase">Initialize <span className="text-primary">Elite</span></h1>
+                <p className="text-[10px] uppercase tracking-[0.3em] font-black text-muted-foreground">Deploy Identity</p>
               </div>
+
+              <Tabs defaultValue="golfer" onValueChange={(v) => setAuthRole(v as any)} className="w-full">
+                <TabsList className="grid w-full grid-cols-2 bg-white/5 h-12 rounded-xl mb-4">
+                  <TabsTrigger value="golfer" className="font-bold text-[10px] uppercase tracking-widest">Golfer Identity</TabsTrigger>
+                  <TabsTrigger value="club" className="font-bold text-[10px] uppercase tracking-widest">Club Protocol</TabsTrigger>
+                </TabsList>
+              </Tabs>
+
               <form onSubmit={handleSignUp} className="space-y-4">
-                <Input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className="h-14 rounded-xl bg-white/5" />
-                <Input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="h-14 rounded-xl bg-white/5" />
-                <Button type="submit" disabled={loading} className="w-full h-14 rounded-xl bg-primary text-white font-black uppercase">Initialize Profile</Button>
+                <Input type="email" placeholder="System Email" value={email} onChange={e => setEmail(e.target.value)} className="h-14 rounded-xl bg-white/5" />
+                <Input type="password" placeholder="Access Key" value={password} onChange={e => setPassword(e.target.value)} className="h-14 rounded-xl bg-white/5" />
+                <Button type="submit" disabled={loading} className="w-full h-14 rounded-xl bg-primary text-white font-black uppercase tracking-widest">Register Identity</Button>
               </form>
-              <button onClick={() => setAuthView('signin')} className="w-full text-[10px] uppercase font-black tracking-widest text-muted-foreground hover:text-primary transition-colors">Return to Entry</button>
+              <button onClick={() => setAuthView('signin')} className="w-full text-[10px] uppercase font-black tracking-widest text-muted-foreground hover:text-primary transition-colors">Return to Access Portal</button>
             </motion.div>
           ) : (
-            <motion.div key="on" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-sm glass-panel p-10 rounded-[2.5rem] space-y-8">
+            <motion.div key="on" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md glass-panel p-10 rounded-[2.5rem] space-y-8">
               <div className="text-center space-y-2">
-                <h1 className="text-4xl font-black tracking-tighter italic uppercase">Signature</h1>
-                <p className="text-[10px] uppercase tracking-[0.3em] font-black text-muted-foreground">Finalize Deployment</p>
+                <h1 className="text-4xl font-black tracking-tighter italic uppercase">Final <span className="text-primary">Signature</span></h1>
+                <p className="text-[10px] uppercase tracking-[0.3em] font-black text-muted-foreground">Finalize Profile Protocol</p>
               </div>
               <form onSubmit={handleCompleteOnboarding} className="space-y-4">
-                <Input placeholder="Full Name" value={fullName} onChange={e => setFullName(e.target.value)} className="h-14 rounded-xl bg-white/5" />
-                <Button type="submit" disabled={loading} className="w-full h-14 rounded-xl bg-primary text-white font-black uppercase">Finalize</Button>
+                {authRole === 'golfer' ? (
+                  <Input placeholder="Golfer Name" value={fullName} onChange={e => setFullName(e.target.value)} className="h-14 rounded-xl bg-white/5" />
+                ) : (
+                  <Input placeholder="Official Club Name" value={clubName} onChange={e => setClubName(e.target.value)} className="h-14 rounded-xl bg-white/5" />
+                )}
+                <Button type="submit" disabled={loading} className="w-full h-14 rounded-xl bg-primary text-white font-black uppercase tracking-widest">Finalize Deployment</Button>
               </form>
             </motion.div>
           )}
@@ -387,7 +433,7 @@ export default function App() {
           <h3 className="text-4xl font-black uppercase italic tracking-tighter">Modernize Your Operations</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="space-y-6 text-left">
-              <h4 className="text-xl font-black uppercase text-destructive italic flex items-center gap-2">Legacy Issues <TrendingDown className="w-5 h-5" /></h4>
+              <h4 className="text-xl font-black uppercase text-destructive italic flex items-center gap-2">Legacy Issues <ArrowRight className="w-5 h-5 rotate-45" /></h4>
               <div className="space-y-4">
                 <PainPoint text="Chaotic Excel sheet management" />
                 <PainPoint text="Paper scorecards with manual entry errors" />
@@ -396,7 +442,7 @@ export default function App() {
               </div>
             </div>
             <div className="space-y-6 text-left">
-              <h4 className="text-xl font-black uppercase text-primary italic flex items-center gap-2">SwingStats Pro <TrendingUp className="w-5 h-5" /></h4>
+              <h4 className="text-xl font-black uppercase text-primary italic flex items-center gap-2">SwingStats Pro <ArrowRight className="w-5 h-5 -rotate-45" /></h4>
               <div className="space-y-4">
                 <SolutionPoint text="Unified Cloud-Based Control Center" />
                 <SolutionPoint text="Instant Digital Verification Protocol" />
@@ -493,12 +539,4 @@ function SolutionPoint({ text }: { text: string }) {
       {text}
     </div>
   )
-}
-
-function TrendingUp({ className }: { className?: string }) {
-  return <ArrowRight className={`-rotate-45 ${className}`} />;
-}
-
-function TrendingDown({ className }: { className?: string }) {
-  return <ArrowRight className={`rotate-45 ${className}`} />;
 }

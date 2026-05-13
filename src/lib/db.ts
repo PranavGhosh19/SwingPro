@@ -1,9 +1,10 @@
-
 "use client"
 
 export interface UserProfile {
+  role: 'club' | 'golfer';
   fullName: string;
   email: string;
+  clubName?: string;
   handicap?: number;
   homeCourse?: string;
   bestRound?: number;
@@ -18,6 +19,7 @@ export interface UserProfile {
   metrics?: {
     longestDrive: number;
     totalBirdies: number;
+    bestRound: number;
   }
 }
 
@@ -66,70 +68,6 @@ export interface League {
   rank: number;
   totalPlayers: number;
   week: number;
-}
-
-const STORAGE_KEY = 'swingstats_rounds';
-const USER_KEY = 'swingstats_user';
-
-export function saveUser(user: UserProfile): void {
-  localStorage.setItem(USER_KEY, JSON.stringify(user));
-}
-
-export function getUser(): UserProfile | null {
-  if (typeof window === 'undefined') return null;
-  const stored = localStorage.getItem(USER_KEY);
-  if (!stored) return null;
-  const user = JSON.parse(stored);
-  // Migrate user with metrics
-  if (!user.metrics) {
-    user.metrics = { longestDrive: 285, totalBirdies: 12 };
-    saveUser(user);
-  }
-  return user;
-}
-
-export function clearSession(): void {
-  localStorage.removeItem(USER_KEY);
-}
-
-export function saveRound(round: Round): void {
-  const rounds = getRounds();
-  
-  // Mock Strokes Gained for MVP
-  const diff = round.grossScore - round.par;
-  round.strokesGained = {
-    tee: Number((Math.random() * 2 - 1).toFixed(1)),
-    approach: Number((Math.random() * 2 - 1).toFixed(1)),
-    short: Number((Math.random() * 2 - 1).toFixed(1)),
-    putting: Number((Math.random() * 2 - 1).toFixed(1)),
-  };
-
-  rounds.unshift(round);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(rounds));
-  
-  const user = getUser();
-  if (user) {
-    user.xp += 100;
-    user.roundsCount = (user.roundsCount || 0) + 1;
-    if (round.grossScore < (user.bestRound || 200)) {
-      user.bestRound = round.grossScore;
-    }
-    if (user.xp >= user.level * 500) {
-      user.level += 1;
-    }
-    saveUser(user);
-  }
-}
-
-export function getRounds(): Round[] {
-  if (typeof window === 'undefined') return [];
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return stored ? JSON.parse(stored) : [];
-}
-
-export function deleteRound(id: string): void {
-  const rounds = getRounds().filter(r => r.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(rounds));
 }
 
 export function calculateDifferential(round: Round): number {

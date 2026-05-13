@@ -1,13 +1,14 @@
-
 {
   "entities": {
     "UserProfile": {
       "title": "UserProfile",
-      "description": "Extended golfer profile and identity data",
+      "description": "User profile with role-based attributes for Clubs and Golfers",
       "type": "object",
       "properties": {
+        "role": { "type": "string", "enum": ["club", "golfer"] },
         "fullName": { "type": "string" },
         "email": { "type": "string" },
+        "clubName": { "type": "string" },
         "xp": { "type": "number" },
         "level": { "type": "number" },
         "badges": { "type": "array", "items": { "type": "string" } },
@@ -27,7 +28,7 @@
           }
         }
       },
-      "required": ["fullName", "email", "xp", "level"]
+      "required": ["fullName", "email", "role"]
     },
     "Round": {
       "title": "Round",
