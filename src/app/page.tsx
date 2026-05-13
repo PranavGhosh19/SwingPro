@@ -345,14 +345,14 @@ export default function App() {
                 exit="exit"
               >
                 {activeTab === 'dashboard' && (
-                  <div className="space-y-10" onPanEnd={handleSwipe}>
+                  <motion.div className="space-y-10" onPanEnd={handleSwipe}>
                     <HandicapDisplay />
                     <StatsGrid />
                     <div className="grid grid-cols-1 gap-8">
                       <HandicapChart />
                     </div>
                     <RecentRounds refreshTrigger={refreshKey} />
-                  </div>
+                  </motion.div>
                 )}
 
                 {activeTab === 'performance' && <PerformanceView />}
