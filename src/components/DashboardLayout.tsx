@@ -46,21 +46,26 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background text-foreground font-body relative overflow-x-hidden">
-        <AppSidebar />
-        <SidebarInset className="flex-1 bg-transparent relative z-10">
-          <header className="p-6 sticky top-0 bg-background/60 backdrop-blur-xl z-50 border-b border-white/5 md:hidden">
-            <div className="flex items-center justify-between">
-              <h1 className="text-xl font-black tracking-tighter uppercase italic">SwingStats <span className="text-primary">Pro</span></h1>
-              <Button variant="ghost" size="icon" onClick={() => signOut(auth!)}><Flag className="w-5 h-5 text-muted-foreground" /></Button>
-            </div>
-          </header>
-          <main className="max-w-4xl mx-auto px-6 py-10 pb-32">
-            {children}
-          </main>
-        </SidebarInset>
+      <AppSidebar />
+      <SidebarInset className="relative flex flex-col min-h-svh w-full overflow-hidden bg-transparent">
+        {/* Tactical Mobile Header */}
+        <header className="p-6 sticky top-0 bg-background/60 backdrop-blur-xl z-50 border-b border-white/5 md:hidden">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-black tracking-tighter uppercase italic">SwingStats <span className="text-primary">Pro</span></h1>
+            <Button variant="ghost" size="icon" onClick={() => signOut(auth!)}><Flag className="w-5 h-5 text-muted-foreground" /></Button>
+          </div>
+        </header>
+
+        {/* Global Tactical Grid Overlay */}
+        <div className="fixed inset-0 pointer-events-none z-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]" />
+
+        {/* Main Content Hub */}
+        <main className="flex-1 w-full max-w-7xl mx-auto px-6 py-10 pb-40 relative z-10">
+          {children}
+        </main>
+
         <Navigation />
-      </div>
+      </SidebarInset>
     </SidebarProvider>
   );
 }
