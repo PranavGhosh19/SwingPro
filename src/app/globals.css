@@ -1,40 +1,52 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Primary: Muted Forest Green -> HSL(142, 40%, 45%) */
+    --background: 0 0% 100%;
+    --foreground: 220 20% 5%;
+    --card: 0 0% 98%;
+    --card-foreground: 220 20% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 5%;
     --primary: 142 40% 45%;
     --primary-foreground: 0 0% 100%;
-    
-    /* Secondary: Deep Charcoal -> HSL(220, 15%, 15%) */
-    --secondary: 220 15% 15%;
-    --secondary-foreground: 0 0% 98%;
-    
-    /* Accent: Golf Gold -> HSL(45, 80%, 55%) */
+    --secondary: 220 15% 95%;
+    --secondary-foreground: 220 15% 15%;
+    --muted: 220 15% 95%;
+    --muted-foreground: 220 10% 45%;
     --accent: 45 80% 55%;
     --accent-foreground: 220 15% 5%;
-
-    --background: 220 20% 5%;
-    --foreground: 0 0% 98%;
-    
-    --card: 220 15% 8%;
-    --card-foreground: 0 0% 98%;
-    
-    --popover: 220 20% 6%;
-    --popover-foreground: 0 0% 98%;
-    
-    --muted: 220 10% 15%;
-    --muted-foreground: 220 5% 65%;
-    
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 142 40% 45%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 220 20% 5%;
+    --foreground: 0 0% 98%;
+    --card: 220 15% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 220 20% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 142 40% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 220 10% 15%;
+    --muted-foreground: 220 5% 65%;
+    --accent: 45 80% 55%;
+    --accent-foreground: 220 15% 5%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
     --border: 220 15% 15%;
     --input: 220 15% 15%;
     --ring: 45 80% 55%;
-    --radius: 0.75rem;
   }
 }
 
@@ -43,7 +55,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground overflow-x-hidden;
+    @apply bg-background text-foreground overflow-x-hidden transition-colors duration-500;
     font-feature-settings: "rlig" 1, "calt" 1;
     background-image: 
       radial-gradient(circle at 50% 0%, hsla(var(--primary), 0.1), transparent 50%),
@@ -53,7 +65,15 @@
 }
 
 .glass-panel {
-  @apply bg-card/60 backdrop-blur-xl border border-white/5 shadow-2xl;
+  @apply backdrop-blur-xl border transition-all duration-300;
+  background-color: hsla(var(--card), 0.6);
+  border-color: hsla(var(--foreground), 0.05);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.dark .glass-panel {
+  background-color: hsla(var(--card), 0.6);
+  border-color: hsla(var(--foreground), 0.05);
 }
 
 .gold-glow {

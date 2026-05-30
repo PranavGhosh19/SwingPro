@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import './globals.css';
 import { FirebaseClientProvider, initializeFirebase } from '@/firebase';
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export default function RootLayout({
   children,
@@ -29,7 +30,7 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <title>SwingStats Pro | Elite Golf Analytics</title>
         <meta name="description" content="Serious analytics for serious golfers. Track handicap, strokes gained, and performance insights." />
@@ -45,10 +46,17 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
       </head>
       <body className="font-body antialiased selection:bg-primary selection:text-white">
-        <FirebaseClientProvider firebaseApp={firebaseApp} firestore={firestore} auth={auth}>
-          {children}
-          <Toaster />
-        </FirebaseClientProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <FirebaseClientProvider firebaseApp={firebaseApp} firestore={firestore} auth={auth}>
+            {children}
+            <Toaster />
+          </FirebaseClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
