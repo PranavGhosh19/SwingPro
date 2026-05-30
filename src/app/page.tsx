@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -240,17 +239,17 @@ export default function LandingPage() {
 
           {/* Cinematic Visualization Component */}
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 1 }} className="relative py-12">
-            <div className="grid grid-cols-2 md:grid-cols-6 gap-4 md:gap-0 items-center justify-center">
+            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-0">
               <VisualizationStep icon={Trophy} label="Tournament" delay={0.1} />
               <VisualizationConnector delay={0.2} />
               <VisualizationStep icon={UserIcon} label="Profile" delay={0.3} />
               <VisualizationConnector delay={0.4} />
               <VisualizationStep icon={BarChart3} label="Analytics" delay={0.5} />
-              <VisualizationConnector delay={0.6} className="hidden md:block" />
+              <VisualizationConnector delay={0.6} className="hidden md:flex" />
               <VisualizationStep icon={Cpu} label="AI Coaching" delay={0.7} />
-              <VisualizationConnector delay={0.8} className="hidden md:block" />
+              <VisualizationConnector delay={0.8} className="hidden md:flex" />
               <VisualizationStep icon={ShieldCheck} label="Handicap" delay={0.9} />
-              <VisualizationConnector delay={1.0} className="hidden md:block" />
+              <VisualizationConnector delay={1.0} className="hidden md:flex" />
               <VisualizationStep icon={Globe} label="Rankings" delay={1.1} />
             </div>
             <div className="mt-12 text-[10px] font-black uppercase tracking-[0.5em] text-primary neon-text">Every Shot Becomes Intelligence.</div>
@@ -554,12 +553,12 @@ function VisualizationStep({ icon: Icon, label, delay }: { icon: any, label: str
 
 function VisualizationConnector({ delay, className = "" }: { delay: number, className?: string }) {
   return (
-    <div className={`flex items-center justify-center ${className}`}>
+    <div className={`items-center justify-center h-14 hidden md:flex ${className}`}>
       <motion.div 
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
         transition={{ delay, duration: 0.5 }}
-        className="w-8 h-[1px] bg-white/10 origin-left"
+        className="w-6 lg:w-10 h-[1px] bg-white/10 origin-left mx-2"
       />
     </div>
   )
