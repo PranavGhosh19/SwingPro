@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -14,15 +13,10 @@ import {
   Loader2,
   Building2,
   User as UserIcon,
-  Calculator,
   Activity,
   Cpu,
-  Database,
-  LineChart,
   ShieldCheck,
-  Smartphone,
   CheckCircle2,
-  ChevronRight,
   TrendingUp,
   Globe,
   MessageSquare,
@@ -30,8 +24,7 @@ import {
   GraduationCap,
   Sparkles,
   Layers,
-  Clock,
-  LayoutGrid
+  ChevronRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -55,10 +48,15 @@ export default function LandingPage() {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [clubName, setClubName] = useState('');
+  const [mounted, setMounted] = useState(false);
   const { toast } = useToast();
   const auth = useAuth();
   const db = useFirestore();
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const userDocRef = useMemoFirebase(() => {
     if (!db || !user) return null;
@@ -68,10 +66,10 @@ export default function LandingPage() {
   const { data: userProfile } = useDoc<UserProfile>(userDocRef);
 
   useEffect(() => {
-    if (user && userProfile) {
+    if (user && userProfile && mounted) {
       router.push('/dashboard');
     }
-  }, [user, userProfile, router]);
+  }, [user, userProfile, router, mounted]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,7 +134,7 @@ export default function LandingPage() {
       .finally(() => setLoading(false));
   };
 
-  if (authLoading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 text-primary animate-spin" /></div>;
+  if (!mounted || authLoading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 text-primary animate-spin" /></div>;
 
   if (authView) {
     return (
@@ -228,7 +226,7 @@ export default function LandingPage() {
       <section className="relative min-h-screen flex flex-col items-center justify-center pt-32 px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/80 to-background" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(74,222,128,0.05)_0%,transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(129,196,255,0.05)_0%,transparent_50%)]" />
           <div className="absolute inset-0 pointer-events-none z-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:60px_60px]" />
         </div>
         
@@ -244,9 +242,6 @@ export default function LandingPage() {
             </h1>
             <p className="mt-8 text-lg md:text-2xl text-muted-foreground font-medium max-w-3xl mx-auto leading-relaxed">
               From academies and coaches to tournaments and players—run, track, and improve every aspect of golf from one platform.
-            </p>
-            <p className="mt-4 text-sm text-muted-foreground max-w-2xl mx-auto">
-              Replace spreadsheets, WhatsApp groups, scorecards, and disconnected tools with a single platform powering coaching, tournaments, rankings, and player development.
             </p>
           </motion.div>
 
@@ -266,7 +261,7 @@ export default function LandingPage() {
           <div className="text-[10px] font-black uppercase tracking-[0.5em] text-primary neon-text">Every Shot Becomes Intelligence.</div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" className="h-16 px-12 rounded-2xl bg-primary text-white font-black uppercase tracking-[0.2em] shadow-2xl hover:scale-105 transition-all group border-none" onClick={() => setAuthView('signin')}>
+            <Button size="lg" className="h-16 px-12 rounded-2xl bg-primary text-white font-black uppercase tracking-[0.2em] shadow-2xl hover:scale-105 transition-all group border-none" onClick={() => setAuthView('signup')}>
               Book a Demo <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button size="lg" variant="ghost" className="h-16 px-12 rounded-2xl border border-border font-black uppercase tracking-[0.2em] hover:bg-muted transition-colors">
@@ -359,7 +354,7 @@ export default function LandingPage() {
                 <MoatCard icon={Trophy} title="Tournaments" color="primary" />
                 <MoatCard icon={Flag} title="Rounds" color="accent" />
              </div>
-             <div className="lg:col-span-2 glass-panel rounded-[2.5rem] p-10 border-white/5 space-y-8 relative overflow-hidden">
+             <div className="lg:col-span-2 glass-panel rounded-[2.5rem] p-10 space-y-8 relative overflow-hidden">
                 <div className="relative z-10 space-y-4">
                    <div className="flex items-center gap-2">
                       <BarChart3 className="w-5 h-5 text-primary" />
@@ -472,7 +467,7 @@ export default function LandingPage() {
 
       {/* Final CTA */}
       <section className="py-40 px-6 text-center relative overflow-hidden">
-         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(74,222,128,0.1)_0%,transparent_50%)]" />
+         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(129,196,255,0.1)_0%,transparent_50%)]" />
          <div className="max-w-4xl mx-auto relative z-10 space-y-12">
             <h2 className="text-5xl md:text-8xl font-black uppercase italic tracking-tighter leading-none">The Future of Golf Development <br /> <span className="text-primary">Starts Here.</span></h2>
             <p className="text-lg text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">
@@ -530,7 +525,7 @@ function VisualizationStep({ icon: Icon, label, delay }: { icon: any, label: str
       className="flex flex-col items-center gap-3 group cursor-pointer"
       style={{ transformStyle: "preserve-3d" }}
     >
-      <div className="w-14 h-14 rounded-2xl bg-white/5 border border-border flex items-center justify-center group-hover:border-primary group-hover:bg-primary/10 transition-all shadow-2xl relative">
+      <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-primary group-hover:bg-primary/10 transition-all shadow-2xl relative">
         <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
         <Icon className="w-6 h-6 text-primary relative z-10" />
       </div>

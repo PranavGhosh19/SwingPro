@@ -7,7 +7,6 @@ import { Metadata, Viewport } from 'next';
 export const metadata: Metadata = {
   title: 'SwingStats Pro | Elite Golf Analytics',
   description: 'Serious analytics for serious golfers. Track handicap, strokes gained, and performance insights.',
-  manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#171F1C',
+  themeColor: '#040911',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,

@@ -10,7 +10,7 @@ export const FirebaseClientProvider: React.FC<{
   const { app, auth, firestore } = useMemo(() => getFirebase(), []);
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
       navigator.serviceWorker.register('/sw.js').then(
         (reg) => console.log('SW registered'),
         (err) => console.log('SW failed', err)

@@ -52,10 +52,10 @@ export function PerformanceView() {
       gir: acc.gir + (r.gir || 0),
       fir: acc.fir + (r.fir || 0),
       sg: {
-        tee: acc.sg.tee + (Number((Math.random() * 2 - 1).toFixed(1))),
-        app: acc.sg.app + (Number((Math.random() * 2 - 1).toFixed(1))),
-        short: acc.sg.short + (Number((Math.random() * 2 - 1).toFixed(1))),
-        putt: acc.sg.putt + (Number((Math.random() * 2 - 1).toFixed(1))),
+        tee: acc.sg.tee + (0.5), 
+        app: acc.sg.app + (-0.2),
+        short: acc.sg.short + (0.1),
+        putt: acc.sg.putt + (0.4),
       }
     }), { gross: 0, putts: 0, gir: 0, fir: 0, sg: { tee: 0, app: 0, short: 0, putt: 0 } });
 
@@ -165,7 +165,7 @@ export function PerformanceView() {
           )}
 
           {activeTab === 'insights' && (
-            <motion.div key="perf-insights" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
+            <motion.div key="perf-insights" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
               <div className="space-y-4">
                 <InsightRow 
                   title="Approach Alert" 

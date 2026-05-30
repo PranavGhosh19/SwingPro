@@ -1,7 +1,6 @@
-
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -19,9 +18,10 @@ export function AddRoundForm({ onComplete }: { onComplete: () => void }) {
   const { user } = useUser();
   const db = useFirestore();
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   const [formData, setFormData] = useState<Partial<Round>>({
-    date: new Date().toISOString().split('T')[0],
+    date: '',
     courseName: '',
     courseRating: 72.0,
     slopeRating: 113,
@@ -29,6 +29,14 @@ export function AddRoundForm({ onComplete }: { onComplete: () => void }) {
     grossScore: 72,
     missDirection: 'N/A'
   });
+
+  useEffect(() => {
+    setMounted(true);
+    setFormData(prev => ({
+      ...prev,
+      date: new Date().toISOString().split('T')[0]
+    }));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,10 +55,8 @@ export function AddRoundForm({ onComplete }: { onComplete: () => void }) {
 
     const roundsRef = collection(db, 'users', user.uid, 'rounds');
     
-    // No await here per guidelines for responsive offline-first UI
     addDoc(roundsRef, roundData)
       .then(() => {
-        // Update user stats
         const userRef = doc(db, 'users', user.uid);
         updateDoc(userRef, {
           xp: increment(100),
@@ -66,12 +72,14 @@ export function AddRoundForm({ onComplete }: { onComplete: () => void }) {
         });
         errorEmitter.emit('permission-error', permissionError);
       })
-      .finally(() => setLoading(false));
+      .then(() => setLoading(false));
   };
 
   const handleChange = (field: keyof Round, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  if (!mounted) return null;
 
   return (
     <Card className="border-none shadow-none bg-transparent">
