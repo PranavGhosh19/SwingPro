@@ -1,7 +1,6 @@
-
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useUser, useFirestore, useCollection } from "@/firebase"
 import { collection, query, orderBy, limit } from "firebase/firestore"
@@ -17,16 +16,20 @@ import {
   BarChart3,
   Lightbulb,
   ArrowUpRight,
-  Trophy,
   History
 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Cell } from "recharts"
+import { Bar, BarChart, ResponsiveContainer, XAxis, Tooltip, Cell } from "recharts"
 
 export function PerformanceView() {
   const { user } = useUser();
   const db = useFirestore();
   const [activeTab, setActiveTab] = useState('overview');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const roundsQuery = useMemoFirebase(() => {
     if (!db || !user) return null;
@@ -40,9 +43,36 @@ export function PerformanceView() {
   const { data: roundsData, loading } = useCollection(roundsQuery);
   const rounds = (roundsData || []) as Round[];
 
-  if (loading) return <div className="p-12 text-center text-muted-foreground font-black uppercase tracking-widest text-[10px]">Syncing Engine...</div>;
+  const analytics = useMemo(() => {
+    if (!mounted || rounds.length === 0) return null;
 
-  if (rounds.length === 0) {
+    const avgStats = rounds.reduce((acc, r) => ({
+      gross: acc.gross + r.grossScore,
+      putts: acc.putts + (r.putts || 0),
+      gir: acc.gir + (r.gir || 0),
+      fir: acc.fir + (r.fir || 0),
+      sg: {
+        tee: acc.sg.tee + (Number((Math.random() * 2 - 1).toFixed(1))),
+        app: acc.sg.app + (Number((Math.random() * 2 - 1).toFixed(1))),
+        short: acc.sg.short + (Number((Math.random() * 2 - 1).toFixed(1))),
+        putt: acc.sg.putt + (Number((Math.random() * 2 - 1).toFixed(1))),
+      }
+    }), { gross: 0, putts: 0, gir: 0, fir: 0, sg: { tee: 0, app: 0, short: 0, putt: 0 } });
+
+    const count = rounds.length;
+    const sgData = [
+      { name: 'Tee', val: avgStats.sg.tee / count },
+      { name: 'App', val: avgStats.sg.app / count },
+      { name: 'Short', val: avgStats.sg.short / count },
+      { name: 'Putt', val: avgStats.sg.putt / count },
+    ];
+
+    return { avgStats, count, sgData };
+  }, [rounds, mounted]);
+
+  if (!mounted || loading) return <div className="p-12 text-center text-muted-foreground font-black uppercase tracking-widest text-[10px]">Syncing Engine...</div>;
+
+  if (rounds.length === 0 || !analytics) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center space-y-4">
         <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
@@ -54,26 +84,7 @@ export function PerformanceView() {
     );
   }
 
-  const avgStats = rounds.reduce((acc, r) => ({
-    gross: acc.gross + r.grossScore,
-    putts: acc.putts + (r.putts || 0),
-    gir: acc.gir + (r.gir || 0),
-    fir: acc.fir + (r.fir || 0),
-    sg: {
-      tee: acc.sg.tee + (Number((Math.random() * 2 - 1).toFixed(1))),
-      app: acc.sg.app + (Number((Math.random() * 2 - 1).toFixed(1))),
-      short: acc.sg.short + (Number((Math.random() * 2 - 1).toFixed(1))),
-      putt: acc.sg.putt + (Number((Math.random() * 2 - 1).toFixed(1))),
-    }
-  }), { gross: 0, putts: 0, gir: 0, fir: 0, sg: { tee: 0, app: 0, short: 0, putt: 0 } });
-
-  const count = rounds.length;
-  const sgData = [
-    { name: 'Tee', val: avgStats.sg.tee / count },
-    { name: 'App', val: avgStats.sg.app / count },
-    { name: 'Short', val: avgStats.sg.short / count },
-    { name: 'Putt', val: avgStats.sg.putt / count },
-  ];
+  const { avgStats, count, sgData } = analytics;
 
   return (
     <div className="space-y-8 pb-32">
@@ -149,16 +160,6 @@ export function PerformanceView() {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="grid grid-cols-2 gap-4 mt-8">
-                  <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                    <p className="text-[8px] font-black uppercase text-muted-foreground mb-1">Strongest Phase</p>
-                    <p className="text-sm font-bold text-primary italic">Putting (+1.2)</p>
-                  </div>
-                  <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                    <p className="text-[8px] font-black uppercase text-muted-foreground mb-1">Growth Opportunity</p>
-                    <p className="text-sm font-bold text-destructive italic">Approach (-0.8)</p>
-                  </div>
-                </div>
               </div>
             </motion.div>
           )}
@@ -184,18 +185,6 @@ export function PerformanceView() {
                   icon={Lightbulb}
                   type="info"
                 />
-              </div>
-
-              <div className="bg-primary/5 rounded-3xl p-6 border border-primary/10 relative overflow-hidden group">
-                <div className="relative z-10 flex items-center justify-between">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Social Context</p>
-                    <h5 className="text-sm font-bold">You're better than 65% of local players</h5>
-                    <p className="text-xs text-muted-foreground">Keep this pace to reach Scratch level by July.</p>
-                  </div>
-                  <Zap className="w-8 h-8 text-primary/40 group-hover:text-primary transition-colors" />
-                </div>
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl -z-10" />
               </div>
             </motion.div>
           )}
