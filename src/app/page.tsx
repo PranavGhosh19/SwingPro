@@ -129,7 +129,6 @@ export default function LandingPage() {
 
   if (authLoading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 text-primary animate-spin" /></div>;
 
-  // Auth Overlay
   if (authView) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-background relative">
@@ -195,10 +194,8 @@ export default function LandingPage() {
     );
   }
 
-  // Landing Page
   return (
     <div className="min-h-screen bg-[#07080a] text-[#f8f9fa] selection:bg-primary selection:text-white font-body">
-      {/* Tactical Header */}
       <header className="fixed top-0 w-full z-50 p-6">
         <nav className="max-w-7xl mx-auto flex items-center justify-between glass-panel px-8 py-4 rounded-full border-white/5 backdrop-blur-3xl shadow-2xl">
           <div className="flex items-center gap-2">
@@ -214,7 +211,6 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      {/* Cinematic Hero Section */}
       <section className="relative min-h-screen flex flex-col items-center justify-center pt-32 px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/80 to-[#07080a]" />
@@ -237,8 +233,14 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          {/* Cinematic Visualization Component */}
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 1 }} className="relative py-12">
+          {/* Cinematic 3D Visualization Section */}
+          <motion.div 
+            initial={{ opacity: 0, rotateX: 20, y: 50 }} 
+            animate={{ opacity: 1, rotateX: 0, y: 0 }} 
+            transition={{ delay: 0.5, duration: 1.2, ease: "easeOut" }} 
+            className="relative py-12"
+            style={{ perspective: 1500, transformStyle: "preserve-3d" }}
+          >
             <div className="flex flex-wrap items-center justify-center gap-4 md:gap-0">
               <VisualizationStep icon={Trophy} label="Tournament" delay={0.1} />
               <VisualizationConnector delay={0.2} />
@@ -266,7 +268,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Trusted By Section */}
       <section className="py-24 border-y border-white/5 bg-white/2 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6">
           <p className="text-[10px] font-black uppercase tracking-[0.5em] text-center text-muted-foreground mb-12">Trusted By Elite Organizations</p>
@@ -280,7 +281,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Problem Section: Golf Runs on Excel */}
       <section className="py-32 px-6" id="solutions">
         <div className="max-w-7xl mx-auto space-y-24">
           <div className="text-center space-y-4">
@@ -297,7 +297,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Solution Section: One Platform */}
       <section className="py-32 px-6 bg-primary/5">
         <div className="max-w-7xl mx-auto space-y-24">
           <div className="text-center space-y-4">
@@ -346,7 +345,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Live Tournament Section */}
       <section className="py-32 px-6 overflow-hidden relative" id="intel">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-8">
@@ -379,7 +377,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* The Data Moat Section */}
       <section className="py-32 px-6 border-y border-white/5 bg-[#0a0c10]">
         <div className="max-w-5xl mx-auto text-center space-y-12">
           <h3 className="text-sm font-black text-accent uppercase tracking-[0.5em]">The Data Moat</h3>
@@ -394,7 +391,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* AI Analyst Section */}
       <section className="py-32 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="order-2 lg:order-1 relative">
@@ -427,7 +423,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Academy Growth Section */}
       <section className="py-32 px-6 bg-white/2 border-y border-white/5">
         <div className="max-w-7xl mx-auto space-y-20">
           <div className="text-center space-y-4">
@@ -457,7 +452,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Rankings Section: LinkedIn for Golfers */}
       <section className="py-32 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-8">
@@ -480,7 +474,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Vision Section */}
       <section className="py-40 px-6 text-center bg-[radial-gradient(circle_at_50%_50%,rgba(74,222,128,0.05)_0%,transparent_70%)]" id="vision">
         <div className="max-w-4xl mx-auto space-y-12">
           <h3 className="text-sm font-black text-primary uppercase tracking-[0.5em]">The Long Game</h3>
@@ -491,7 +484,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Final CTA */}
       <section className="py-32 px-6 relative overflow-hidden">
         <div className="max-w-5xl mx-auto glass-panel rounded-[3rem] p-16 md:p-24 text-center space-y-12 border-white/10 relative z-10 shadow-2xl overflow-hidden">
           <div className="absolute inset-0 bg-primary/5 -z-10" />
@@ -538,13 +530,21 @@ function NavAnchor({ href, children }: { href: string, children: React.ReactNode
 function VisualizationStep({ icon: Icon, label, delay }: { icon: any, label: string, delay: number }) {
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-      className="flex flex-col items-center gap-3 group"
+      initial={{ opacity: 0, z: -50, rotateY: -30 }}
+      animate={{ opacity: 1, z: 0, rotateY: 0 }}
+      whileHover={{ 
+        z: 60, 
+        rotateY: 15, 
+        rotateX: -10,
+        transition: { type: "spring", stiffness: 300, damping: 20 } 
+      }}
+      transition={{ delay, duration: 0.8 }}
+      className="flex flex-col items-center gap-3 group cursor-pointer"
+      style={{ transformStyle: "preserve-3d" }}
     >
-      <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-primary/50 group-hover:bg-primary/10 transition-all shadow-xl">
-        <Icon className="w-6 h-6 text-primary" />
+      <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-primary group-hover:bg-primary/10 transition-all shadow-2xl relative">
+        <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Icon className="w-6 h-6 text-primary relative z-10" />
       </div>
       <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground group-hover:text-primary transition-colors">{label}</span>
     </motion.div>
@@ -553,12 +553,12 @@ function VisualizationStep({ icon: Icon, label, delay }: { icon: any, label: str
 
 function VisualizationConnector({ delay, className = "" }: { delay: number, className?: string }) {
   return (
-    <div className={`items-center justify-center h-14 hidden md:flex ${className}`}>
+    <div className={`items-center justify-center h-14 flex ${className}`}>
       <motion.div 
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ delay, duration: 0.5 }}
-        className="w-6 lg:w-10 h-[1px] bg-white/10 origin-left mx-2"
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={{ scaleX: 1, opacity: 1 }}
+        transition={{ delay, duration: 0.6 }}
+        className="w-8 lg:w-12 h-[1px] bg-gradient-to-r from-white/10 via-primary/30 to-white/10 origin-left mx-2"
       />
     </div>
   )
