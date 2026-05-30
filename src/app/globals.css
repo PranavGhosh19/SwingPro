@@ -4,47 +4,47 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 20% 98%;
     --foreground: 222 47% 4%;
-    --card: 0 0% 98%;
+    --card: 0 0% 100%;
     --card-foreground: 222 47% 4%;
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 4%;
-    --primary: 207 73% 32%;
+    --primary: 207 73% 32%; /* Deep Blue #16588E equivalent */
     --primary-foreground: 0 0% 100%;
     --secondary: 208 100% 97%;
     --secondary-foreground: 207 73% 20%;
     --muted: 220 15% 95%;
     --muted-foreground: 220 10% 45%;
-    --accent: 208 100% 75%;
+    --accent: 208 100% 75%; /* Light Blue #81C4FF equivalent */
     --accent-foreground: 207 73% 10%;
-    --destructive: 356 81% 52%;
+    --destructive: 356 81% 52%; /* Racing Red #E7222E equivalent */
     --destructive-foreground: 0 0% 98%;
     --border: 220 15% 90%;
     --input: 220 15% 90%;
     --ring: 207 73% 32%;
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 222 47% 4%;
+    --background: 224 71% 4%;
     --foreground: 0 0% 98%;
-    --card: 222 47% 6%;
+    --card: 224 71% 4%;
     --card-foreground: 0 0% 98%;
-    --popover: 222 47% 5%;
+    --popover: 224 71% 5%;
     --popover-foreground: 0 0% 98%;
-    --primary: 208 100% 75%;
-    --primary-foreground: 222 47% 4%;
-    --secondary: 207 73% 32%;
+    --primary: 208 100% 75%; /* Light Blue accent in dark mode */
+    --primary-foreground: 224 71% 4%;
+    --secondary: 207 73% 32%; /* Deep Blue as secondary */
     --secondary-foreground: 0 0% 98%;
-    --muted: 222 47% 12%;
+    --muted: 224 71% 10%;
     --muted-foreground: 215 20.2% 65.1%;
     --accent: 208 100% 75%;
-    --accent-foreground: 222 47% 4%;
+    --accent-foreground: 224 71% 4%;
     --destructive: 356 81% 52%;
     --destructive-foreground: 0 0% 98%;
-    --border: 222 47% 12%;
-    --input: 222 47% 12%;
+    --border: 224 71% 12%;
+    --input: 224 71% 12%;
     --ring: 208 100% 75%;
   }
 }
@@ -57,24 +57,25 @@
     @apply bg-background text-foreground overflow-x-hidden transition-colors duration-500;
     font-feature-settings: "rlig" 1, "calt" 1;
     background-image: 
-      radial-gradient(circle at 50% 0%, hsla(var(--primary), 0.05), transparent 50%),
-      radial-gradient(circle at 100% 100%, hsla(var(--accent), 0.03), transparent 40%);
+      radial-gradient(circle at 50% 0%, hsla(var(--primary), 0.08), transparent 50%),
+      radial-gradient(circle at 100% 100%, hsla(var(--accent), 0.05), transparent 40%);
     background-attachment: fixed;
   }
 }
 
 .glass-panel {
-  @apply backdrop-blur-xl transition-all duration-300;
-  background-color: hsla(var(--card), 0.6);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  @apply backdrop-blur-2xl transition-all duration-300;
+  background-color: hsla(var(--card), 0.5);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  border: none; /* Borders removed as requested */
 }
 
 .neon-glow {
-  box-shadow: 0 0 20px -5px hsla(var(--primary), 0.3);
+  box-shadow: 0 0 20px -5px hsla(var(--primary), 0.4);
 }
 
 .neon-text {
-  text-shadow: 0 0 10px hsla(var(--primary), 0.4);
+  text-shadow: 0 0 12px hsla(var(--primary), 0.5);
 }
 
 .vigilant-scan {
@@ -89,10 +90,10 @@
   left: 0;
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, hsla(var(--accent), 0.3), transparent);
-  animation: scanline 6s linear infinite;
+  background: linear-gradient(90deg, transparent, hsla(var(--accent), 0.4), transparent);
+  animation: scanline 8s linear infinite;
   z-index: 20;
-  opacity: 0.5;
+  opacity: 0.3;
 }
 
 @keyframes scanline {
@@ -100,13 +101,32 @@
   100% { transform: translateY(1000%); }
 }
 
+.vigilance-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, hsla(var(--primary), 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, hsla(var(--primary), 0.03) 1px, transparent 1px);
+}
+
+.morph-exit {
+  filter: blur(10px);
+  transform: scale(1.05);
+  opacity: 0;
+}
+
+.morph-enter {
+  filter: blur(0px);
+  transform: scale(1);
+  opacity: 1;
+}
+
 .modern-scrollbar::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
 }
 .modern-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 .modern-scrollbar::-webkit-scrollbar-thumb {
-  background: hsla(var(--muted-foreground), 0.2);
+  background: hsla(var(--muted-foreground), 0.1);
   border-radius: 10px;
 }

@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -14,7 +13,9 @@ import {
   Calculator,
   Flag,
   Users,
-  CheckCircle2
+  CheckCircle2,
+  Activity,
+  Cpu
 } from "lucide-react"
 
 import {
@@ -72,25 +73,31 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar className="border-r border-border bg-background/40 backdrop-blur-xl transition-colors duration-500">
-      <SidebarHeader className="p-6 border-b border-border">
-        <div className="flex items-center justify-between mb-2">
+    <Sidebar className="border-r border-white/5 bg-background/40 backdrop-blur-3xl transition-colors duration-500 overflow-hidden">
+      <div className="absolute inset-0 vigilance-grid opacity-10 pointer-events-none" />
+      
+      <SidebarHeader className="p-8 border-b border-white/5 relative z-10">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex flex-col">
-            <h1 className="text-xl font-black tracking-tighter uppercase italic leading-none">
+            <h1 className="text-2xl font-black tracking-tighter uppercase italic leading-none">
               SwingStats <span className="text-primary neon-text">Pro</span>
             </h1>
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-2">
-              {isClub ? 'Club Operations' : 'Elite Analytics'} v2.5
-            </p>
+            <div className="flex items-center gap-2 mt-3">
+              <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
+              <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.3em]">
+                {isClub ? 'Club Ops' : 'Intelligence'} Hub v3.0
+              </p>
+            </div>
           </div>
           <ThemeToggle />
         </div>
       </SidebarHeader>
-      <SidebarContent className="px-4 py-6 modern-scrollbar">
+
+      <SidebarContent className="px-4 py-8 modern-scrollbar relative z-10">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4 px-2">Navigation Protocol</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground/60 mb-6 px-4">Registry Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-2">
               {menuItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
@@ -98,15 +105,16 @@ export function AppSidebar() {
                     <SidebarMenuButton 
                       asChild
                       isActive={isActive}
-                      className={`h-12 rounded-xl px-4 transition-all duration-300 ${
+                      className={`h-12 rounded-2xl px-5 transition-all duration-500 group relative ${
                         isActive 
-                        ? 'bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.1)]' 
-                        : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                        ? 'bg-primary/10 text-primary border-none shadow-[0_0_20px_rgba(var(--primary),0.15)]' 
+                        : 'hover:bg-white/5 text-muted-foreground hover:text-foreground border-none'
                       }`}
                     >
                       <Link href={item.href}>
-                        <item.icon className={`w-5 h-5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
-                        <span className="font-black uppercase text-[10px] tracking-widest ml-3">{item.label}</span>
+                        <div className={`absolute left-0 w-1 h-6 bg-primary rounded-r-full transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0'}`} />
+                        <item.icon className={`w-5 h-5 transition-all duration-300 ${isActive ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-primary'}`} />
+                        <span className="font-black uppercase text-[10px] tracking-widest ml-4">{item.label}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -116,15 +124,16 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-6 border-t border-border bg-muted/20">
+
+      <SidebarFooter className="p-8 border-t border-white/5 bg-muted/20 relative z-10">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton 
               onClick={handleSignOut}
-              className="h-12 rounded-xl px-4 text-destructive hover:bg-destructive/10 transition-all border border-transparent hover:border-destructive/20"
+              className="h-14 rounded-2xl px-5 text-destructive hover:bg-destructive/10 transition-all border-none group"
             >
-              <LogOut className="w-5 h-5" />
-              <span className="font-black uppercase text-[10px] tracking-widest ml-3">Terminate</span>
+              <LogOut className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+              <span className="font-black uppercase text-[10px] tracking-widest ml-4">Terminate Session</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

@@ -53,11 +53,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background overflow-hidden">
+      <div className="flex min-h-screen w-full bg-background overflow-hidden relative">
         <AppSidebar />
         <SidebarInset className="relative flex flex-col flex-1 min-w-0 bg-transparent">
           {/* Tactical Mobile Header */}
-          <header className="p-6 sticky top-0 bg-background/60 backdrop-blur-xl z-50 border-b border-white/5 md:hidden">
+          <header className="p-6 sticky top-0 bg-background/60 backdrop-blur-xl z-50 md:hidden">
             <div className="flex items-center justify-between">
               <h1 className="text-xl font-black tracking-tighter uppercase italic">SwingStats <span className="text-primary">Pro</span></h1>
               <Button variant="ghost" size="icon" onClick={() => signOut(auth!)}><Flag className="w-5 h-5 text-muted-foreground" /></Button>
@@ -65,16 +65,39 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </header>
 
           {/* Global Tactical Grid Overlay */}
-          <div className="fixed inset-0 pointer-events-none z-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]" />
+          <div className="fixed inset-0 pointer-events-none z-0 vigilance-grid" />
+          <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_50%_40%,hsla(var(--primary),0.05)_0%,transparent_60%)]" />
 
           <AnimatePresence mode="wait">
             <motion.main
               key={pathname}
-              initial={{ opacity: 0, y: 10, scale: 0.99 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 1.01 }}
-              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+              initial={{ 
+                opacity: 0, 
+                scale: 0.98, 
+                filter: 'blur(10px)',
+                z: -50 
+              }}
+              animate={{ 
+                opacity: 1, 
+                scale: 1, 
+                filter: 'blur(0px)',
+                z: 0 
+              }}
+              exit={{ 
+                opacity: 0, 
+                scale: 1.02, 
+                filter: 'blur(10px)',
+                z: 50 
+              }}
+              transition={{ 
+                duration: 0.5, 
+                ease: [0.23, 1, 0.32, 1],
+                type: "spring",
+                stiffness: 100,
+                damping: 20
+              }}
               className="flex-1 w-full max-w-7xl mx-auto px-6 py-10 pb-40 relative z-10"
+              style={{ perspective: 1000 }}
             >
               {children}
             </motion.main>
