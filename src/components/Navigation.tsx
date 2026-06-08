@@ -19,12 +19,12 @@ export function Navigation() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="max-w-md mx-auto glass-panel rounded-[2rem] p-3 flex items-center justify-around relative vigilant-scan shadow-[0_-8px_48px_0_rgba(0,0,0,0.5)] border border-white/5"
+        className="max-w-md mx-auto glass-panel rounded-[2rem] p-3 flex items-center justify-around relative shadow-[0_-8px_48px_0_rgba(0,0,0,0.5)] border border-white/5"
       >
         <NavButton active={pathname === '/dashboard'} href="/dashboard" icon={Home} label="Home" />
         <NavButton active={pathname === '/calculator'} href="/calculator" icon={Calculator} label="Calc" />
         
-        {/* Primary Action Morph Hub */}
+        {/* Primary Action Morph Hub - Elevated with overflow allowed */}
         <div className="relative -top-10 z-[110]">
           <motion.div
             whileHover={{ scale: 1.15, y: -5 }}
