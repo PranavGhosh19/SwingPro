@@ -219,7 +219,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <Button variant="outline" className="rounded-full px-8 border-white/10 bg-white/5 font-black uppercase text-[10px] tracking-widest hover:bg-primary/20 hover:text-primary transition-all" onClick={() => setAuthView('signin')}>Enter Platform</Button>
+            <Button variant="outline" className="hidden md:inline-flex rounded-full px-8 border-white/10 bg-white/5 font-black uppercase text-[10px] tracking-widest hover:bg-primary/20 hover:text-primary transition-all" onClick={() => setAuthView('signin')}>Enter Platform</Button>
           </div>
         </nav>
       </header>
