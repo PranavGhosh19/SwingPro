@@ -3,6 +3,7 @@ import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Metadata, Viewport } from 'next';
+import { PersistentShell } from '@/components/PersistentShell';
 
 export const metadata: Metadata = {
   title: 'SwingStats Pro | Elite Golf Analytics',
@@ -42,7 +43,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <FirebaseClientProvider>
-            {children}
+            <PersistentShell>
+              {children}
+            </PersistentShell>
             <Toaster />
           </FirebaseClientProvider>
         </ThemeProvider>

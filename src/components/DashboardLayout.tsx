@@ -4,9 +4,7 @@ import { useUser, useDoc } from "@/firebase"
 import { doc } from "firebase/firestore"
 import { useFirestore } from "@/firebase"
 import { UserProfile } from "@/lib/db"
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/AppSidebar"
-import { Navigation } from "@/components/Navigation"
+import { SidebarInset } from "@/components/ui/sidebar"
 import { Loader2, Flag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
@@ -52,63 +50,56 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   if (!user || !userProfile) return null;
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background overflow-hidden relative">
-        <AppSidebar />
-        <SidebarInset className="relative flex flex-col flex-1 min-w-0 bg-transparent">
-          {/* Tactical Mobile Header */}
-          <header className="p-6 sticky top-0 bg-background/60 backdrop-blur-xl z-50 md:hidden">
-            <div className="flex items-center justify-between">
-              <h1 className="text-xl font-black tracking-tighter uppercase italic">SwingStats <span className="text-primary">Pro</span></h1>
-              <Button variant="ghost" size="icon" onClick={() => signOut(auth!)}><Flag className="w-5 h-5 text-muted-foreground" /></Button>
-            </div>
-          </header>
+    <SidebarInset className="relative flex flex-col flex-1 min-w-0 bg-transparent">
+      {/* Tactical Mobile Header */}
+      <header className="p-6 sticky top-0 bg-background/60 backdrop-blur-xl z-50 md:hidden">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-black tracking-tighter uppercase italic">SwingStats <span className="text-primary">Pro</span></h1>
+          <Button variant="ghost" size="icon" onClick={() => signOut(auth!)}><Flag className="w-5 h-5 text-muted-foreground" /></Button>
+        </div>
+      </header>
 
-          {/* Global Tactical Grid Overlay */}
-          <div className="fixed inset-0 pointer-events-none z-0 vigilance-grid" />
-          <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_50%_40%,hsla(var(--primary),0.05)_0%,transparent_60%)]" />
+      {/* Global Tactical Grid Overlay */}
+      <div className="fixed inset-0 pointer-events-none z-0 vigilance-grid" />
+      <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_50%_40%,hsla(var(--primary),0.05)_0%,transparent_60%)]" />
 
-          <AnimatePresence mode="wait">
-            <motion.main
-              key={pathname}
-              initial={{ 
-                opacity: 0, 
-                scale: 0.95, 
-                filter: 'blur(15px)',
-                z: -100,
-                rotateX: 5
-              }}
-              animate={{ 
-                opacity: 1, 
-                scale: 1, 
-                filter: 'blur(0px)',
-                z: 0,
-                rotateX: 0
-              }}
-              exit={{ 
-                opacity: 0, 
-                scale: 1.05, 
-                filter: 'blur(15px)',
-                z: 100,
-                rotateX: -5
-              }}
-              transition={{ 
-                duration: 0.6, 
-                ease: [0.23, 1, 0.32, 1],
-                type: "spring",
-                stiffness: 80,
-                damping: 18
-              }}
-              className="flex-1 w-full max-w-7xl mx-auto px-6 py-10 pb-40 relative z-10"
-              style={{ perspective: 1200 }}
-            >
-              {children}
-            </motion.main>
-          </AnimatePresence>
-
-          <Navigation />
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
+      <AnimatePresence mode="wait">
+        <motion.main
+          key={pathname}
+          initial={{ 
+            opacity: 0, 
+            scale: 0.95, 
+            filter: 'blur(15px)',
+            z: -100,
+            rotateX: 5
+          }}
+          animate={{ 
+            opacity: 1, 
+            scale: 1, 
+            filter: 'blur(0px)',
+            z: 0,
+            rotateX: 0
+          }}
+          exit={{ 
+            opacity: 0, 
+            scale: 1.05, 
+            filter: 'blur(15px)',
+            z: 100,
+            rotateX: -5
+          }}
+          transition={{ 
+            duration: 0.6, 
+            ease: [0.23, 1, 0.32, 1],
+            type: "spring",
+            stiffness: 80,
+            damping: 18
+          }}
+          className="flex-1 w-full max-w-7xl mx-auto px-6 py-10 pb-40 relative z-10"
+          style={{ perspective: 1200 }}
+        >
+          {children}
+        </motion.main>
+      </AnimatePresence>
+    </SidebarInset>
   );
 }

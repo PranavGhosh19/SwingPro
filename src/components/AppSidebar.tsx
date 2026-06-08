@@ -11,11 +11,8 @@ import {
   Plus, 
   LogOut,
   Calculator,
-  Flag,
-  Users,
   CheckCircle2,
-  Activity,
-  Cpu
+  Users
 } from "lucide-react"
 
 import {
@@ -51,6 +48,8 @@ export function AppSidebar() {
 
   const { data: userProfile } = useDoc<UserProfile>(userDocRef);
 
+  if (!user) return null;
+
   const handleSignOut = () => {
     if (auth) signOut(auth);
   };
@@ -73,7 +72,7 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar className="border-r border-white/5 bg-background/40 backdrop-blur-3xl transition-colors duration-500 overflow-hidden">
+    <Sidebar className="border-r-0 bg-background/40 backdrop-blur-3xl transition-colors duration-500 overflow-hidden shadow-[1px_0_0_0_rgba(255,255,255,0.05)]">
       <div className="absolute inset-0 vigilance-grid opacity-10 pointer-events-none" />
       
       <SidebarHeader className="p-8 border-b border-white/5 relative z-10">
@@ -105,10 +104,10 @@ export function AppSidebar() {
                     <SidebarMenuButton 
                       asChild
                       isActive={isActive}
-                      className={`h-12 rounded-2xl px-5 transition-all duration-500 group relative ${
+                      className={`h-12 rounded-2xl px-5 transition-all duration-500 group relative border-none ${
                         isActive 
-                        ? 'bg-primary/10 text-primary border-none shadow-[0_0_20px_rgba(var(--primary),0.15)]' 
-                        : 'hover:bg-white/5 text-muted-foreground hover:text-foreground border-none'
+                        ? 'bg-primary/10 text-primary shadow-[0_0_20px_rgba(var(--primary),0.15)]' 
+                        : 'hover:bg-white/5 text-muted-foreground hover:text-foreground'
                       }`}
                     >
                       <Link href={item.href}>
