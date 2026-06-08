@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from "next/link"
@@ -15,30 +14,35 @@ export function Navigation() {
   if (!isMobile) return null;
 
   return (
-    <div className="fixed bottom-8 left-0 right-0 px-6 z-50">
+    <div className="fixed bottom-8 left-0 right-0 px-6 z-[100]">
       <motion.div 
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="max-w-md mx-auto glass-panel rounded-[2rem] p-3 flex items-center justify-around relative vigilant-scan shadow-[0_-8px_32px_0_rgba(0,0,0,0.4)]"
+        className="max-w-md mx-auto glass-panel rounded-[2rem] p-3 flex items-center justify-around relative vigilant-scan shadow-[0_-8px_48px_0_rgba(0,0,0,0.5)] border border-white/5"
       >
         <NavButton active={pathname === '/dashboard'} href="/dashboard" icon={Home} label="Home" />
         <NavButton active={pathname === '/calculator'} href="/calculator" icon={Calculator} label="Calc" />
         
-        <div className="relative -top-8">
+        {/* Primary Action Morph Hub */}
+        <div className="relative -top-10 z-[110]">
           <motion.div
-            whileHover={{ scale: 1.1 }}
+            whileHover={{ scale: 1.15, y: -5 }}
             whileTap={{ scale: 0.9 }}
             className="relative"
           >
-            <div className="absolute inset-0 bg-primary blur-xl opacity-30 animate-pulse" />
+            {/* Tactical High-Intensity Glow */}
+            <div className="absolute inset-0 bg-primary blur-2xl opacity-40 animate-pulse" />
+            <div className="absolute -inset-1 bg-gradient-to-t from-primary/50 to-accent/50 rounded-2xl blur-md opacity-30" />
+            
             <Button 
               asChild
-              className="w-14 h-14 rounded-2xl bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/40 border-4 border-background relative z-10"
+              className="w-16 h-16 rounded-2xl bg-primary hover:bg-primary/90 shadow-[0_0_30px_rgba(var(--primary),0.5)] border-4 border-background relative z-10 group overflow-hidden"
               size="icon"
             >
               <Link href="/add-round">
-                <Plus className="w-7 h-7 text-white" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Plus className="w-8 h-8 text-white relative z-20 group-hover:rotate-90 transition-transform duration-500" />
               </Link>
             </Button>
           </motion.div>
@@ -62,7 +66,7 @@ function NavButton({ icon: Icon, label, active, href }: { icon: any, label: stri
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 5 }}
-              className="text-[8px] font-black uppercase tracking-[0.2em] mt-1 text-primary"
+              className="text-[8px] font-black uppercase tracking-[0.2em] mt-1 text-primary neon-text"
             >
               {label}
             </motion.span>
