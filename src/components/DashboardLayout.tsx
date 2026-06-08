@@ -73,31 +73,34 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               key={pathname}
               initial={{ 
                 opacity: 0, 
-                scale: 0.98, 
-                filter: 'blur(10px)',
-                z: -50 
+                scale: 0.95, 
+                filter: 'blur(15px)',
+                z: -100,
+                rotateX: 5
               }}
               animate={{ 
                 opacity: 1, 
                 scale: 1, 
                 filter: 'blur(0px)',
-                z: 0 
+                z: 0,
+                rotateX: 0
               }}
               exit={{ 
                 opacity: 0, 
-                scale: 1.02, 
-                filter: 'blur(10px)',
-                z: 50 
+                scale: 1.05, 
+                filter: 'blur(15px)',
+                z: 100,
+                rotateX: -5
               }}
               transition={{ 
-                duration: 0.5, 
+                duration: 0.6, 
                 ease: [0.23, 1, 0.32, 1],
                 type: "spring",
-                stiffness: 100,
-                damping: 20
+                stiffness: 80,
+                damping: 18
               }}
               className="flex-1 w-full max-w-7xl mx-auto px-6 py-10 pb-40 relative z-10"
-              style={{ perspective: 1000 }}
+              style={{ perspective: 1200 }}
             >
               {children}
             </motion.main>

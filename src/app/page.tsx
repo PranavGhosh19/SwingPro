@@ -24,7 +24,9 @@ import {
   GraduationCap,
   Sparkles,
   Layers,
-  ChevronRight
+  ChevronRight,
+  LineChart,
+  TrendingDown
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -140,10 +142,10 @@ export default function LandingPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-background relative">
         <div className="absolute top-6 right-6 z-50"><ThemeToggle /></div>
-        <div className="absolute inset-0 pointer-events-none z-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:40px_40px]" />
+        <div className="absolute inset-0 pointer-events-none z-0 bg-[linear-gradient(rgba(22,88,142,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(22,88,142,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
         <AnimatePresence mode="wait">
           {authView === 'signin' ? (
-            <motion.div key="in" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md glass-panel p-10 rounded-[2.5rem] space-y-8 relative z-10 border-white/5 shadow-2xl">
+            <motion.div key="in" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md glass-panel p-10 rounded-[2.5rem] space-y-8 relative z-10 shadow-2xl">
               <div className="text-center space-y-2">
                 <h1 className="text-4xl font-black tracking-tighter italic uppercase">SwingStats <span className="text-primary">Pro</span></h1>
                 <p className="text-[10px] uppercase tracking-[0.3em] font-black text-muted-foreground">Authorize Entry</p>
@@ -165,7 +167,7 @@ export default function LandingPage() {
               </div>
             </motion.div>
           ) : authView === 'signup' ? (
-             <motion.div key="up" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md glass-panel p-10 rounded-[2.5rem] space-y-8 relative z-10 border-white/5 shadow-2xl">
+             <motion.div key="up" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md glass-panel p-10 rounded-[2.5rem] space-y-8 relative z-10 shadow-2xl">
               <div className="text-center space-y-2">
                 <h1 className="text-4xl font-black tracking-tighter italic uppercase">Deploy <span className="text-primary">Identity</span></h1>
               </div>
@@ -183,7 +185,7 @@ export default function LandingPage() {
               <button onClick={() => setAuthView('signin')} className="w-full text-[10px] uppercase font-black tracking-widest text-muted-foreground hover:text-primary transition-colors">Return to Access Portal</button>
             </motion.div>
           ) : (
-            <motion.div key="on" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md glass-panel p-10 rounded-[2.5rem] space-y-8 relative z-10 border-white/5 shadow-2xl">
+            <motion.div key="on" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md glass-panel p-10 rounded-[2.5rem] space-y-8 relative z-10 shadow-2xl">
               <div className="text-center space-y-2">
                 <h1 className="text-4xl font-black tracking-tighter italic uppercase">Final <span className="text-primary">Signature</span></h1>
               </div>
@@ -320,7 +322,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="relative">
-            <div className="glass-panel rounded-[2.5rem] p-8 space-y-6 border-white/5 relative z-10 vigilant-scan overflow-hidden">
+            <div className="glass-panel rounded-[2.5rem] p-8 space-y-6 relative z-10 vigilant-scan overflow-hidden">
               <div className="flex items-center justify-between">
                 <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Live Feed • Stroke Play</h4>
                 <div className="flex items-center gap-2">
@@ -392,7 +394,7 @@ export default function LandingPage() {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-               <div className="glass-panel rounded-[2.5rem] p-10 border-destructive/10 space-y-8 bg-destructive/5">
+               <div className="glass-panel rounded-[2.5rem] p-10 space-y-8 bg-destructive/5">
                   <h4 className="text-2xl font-black uppercase italic tracking-tighter text-destructive">Traditional Workflow</h4>
                   <div className="space-y-4">
                      <WorkflowItem icon={ClipboardList} label="Scattered Excel Sheets" />
@@ -401,7 +403,7 @@ export default function LandingPage() {
                      <WorkflowItem icon={CheckCircle2} label="Paper Scoring & Attendance" />
                   </div>
                </div>
-               <div className="glass-panel rounded-[2.5rem] p-10 border-primary/20 space-y-8 bg-primary/5 relative vigilant-scan overflow-hidden">
+               <div className="glass-panel rounded-[2.5rem] p-10 space-y-8 bg-primary/5 relative vigilant-scan overflow-hidden">
                   <h4 className="text-2xl font-black uppercase italic tracking-tighter text-primary">Intelligence Hub Workflow</h4>
                   <div className="space-y-4">
                      <WorkflowItem icon={Layers} label="Single Integrated Platform" />
@@ -433,7 +435,7 @@ export default function LandingPage() {
                </div>
             </div>
             <div className="relative">
-               <div className="glass-panel rounded-[2.5rem] p-10 border-white/5 space-y-8 relative z-10">
+               <div className="glass-panel rounded-[2.5rem] p-10 space-y-8 relative z-10">
                   <div className="flex items-center gap-4 border-b border-white/5 pb-8">
                      <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-3xl font-black italic text-primary">JD</div>
                      <div>
@@ -588,7 +590,7 @@ function FeedItem({ score, name, status, highlight = false }: { score: string, n
 function MoatCard({ icon: Icon, title, color }: { icon: any, title: string, color: 'primary' | 'accent' }) {
   const colorClass = color === 'primary' ? 'text-primary' : 'text-accent';
   return (
-    <div className="glass-panel p-4 rounded-2xl border-white/5 flex items-center gap-4 hover:border-white/20 transition-all cursor-pointer group">
+    <div className="glass-panel p-4 rounded-2xl flex items-center gap-4 hover:border-white/20 transition-all cursor-pointer group">
        <div className={`w-10 h-10 rounded-xl bg-${color}/10 flex items-center justify-center group-hover:neon-glow transition-all`}>
           <Icon className={`w-5 h-5 ${colorClass}`} />
        </div>
