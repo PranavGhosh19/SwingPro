@@ -587,12 +587,25 @@ function FeedItem({ score, name, status, highlight = false }: { score: string, n
   )
 }
 
+const STATIC_COLORS = {
+  primary: 'bg-primary/10',
+  accent: 'bg-accent/10',
+  destructive: 'bg-destructive/10'
+};
+
+const STATIC_TEXT_COLORS = {
+  primary: 'text-primary',
+  accent: 'text-accent',
+  destructive: 'text-destructive'
+};
+
 function MoatCard({ icon: Icon, title, color }: { icon: any, title: string, color: 'primary' | 'accent' }) {
-  const colorClass = color === 'primary' ? 'text-primary' : 'text-accent';
+  const bgClass = STATIC_COLORS[color];
+  const textClass = STATIC_TEXT_COLORS[color];
   return (
     <div className="glass-panel p-4 rounded-2xl flex items-center gap-4 hover:border-white/20 transition-all cursor-pointer group">
-       <div className={`w-10 h-10 rounded-xl bg-${color}/10 flex items-center justify-center group-hover:neon-glow transition-all`}>
-          <Icon className={`w-5 h-5 ${colorClass}`} />
+       <div className={`w-10 h-10 rounded-xl ${bgClass} flex items-center justify-center group-hover:neon-glow transition-all`}>
+          <Icon className={`w-5 h-5 ${textClass}`} />
        </div>
        <span className="text-sm font-black uppercase italic">{title}</span>
     </div>
@@ -600,11 +613,7 @@ function MoatCard({ icon: Icon, title, color }: { icon: any, title: string, colo
 }
 
 function AnalystStat({ label, val, color }: { label: string, val: string, color: 'primary' | 'accent' | 'destructive' }) {
-  const colorClass = {
-    primary: 'text-primary',
-    accent: 'text-accent',
-    destructive: 'text-destructive'
-  }[color];
+  const colorClass = STATIC_TEXT_COLORS[color];
   
   return (
     <div className="text-center">
