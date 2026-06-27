@@ -26,7 +26,8 @@ import {
   Layers,
   ChevronRight,
   LineChart,
-  TrendingDown
+  TrendingDown,
+  Mail
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -177,11 +178,24 @@ export default function LandingPage() {
                   <TabsTrigger value="club" className="font-bold text-[10px] uppercase tracking-widest">Club</TabsTrigger>
                 </TabsList>
               </Tabs>
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <Input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className="h-14 rounded-xl bg-white/5 border-white/10" />
-                <Input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="h-14 rounded-xl bg-white/5 border-white/10" />
-                <Button type="submit" disabled={loading} className="w-full h-14 rounded-xl bg-primary text-white font-black uppercase tracking-widest hover:scale-[1.02] transition-transform">Initialize Profile</Button>
-              </form>
+              
+              {authRole === 'club' ? (
+                <div className="text-center space-y-6 py-8">
+                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto border border-primary/20">
+                    <Mail className="w-8 h-8 text-primary" />
+                  </div>
+                  <p className="text-sm font-bold uppercase tracking-widest leading-relaxed text-muted-foreground">
+                    Please Write a Mail to <span className="text-primary font-black italic">Contact@swingStatsPro.com</span> to register your club. We will get back to you.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  <Input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className="h-14 rounded-xl bg-white/5 border-white/10" />
+                  <Input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="h-14 rounded-xl bg-white/5 border-white/10" />
+                  <Button type="submit" disabled={loading} className="w-full h-14 rounded-xl bg-primary text-white font-black uppercase tracking-widest hover:scale-[1.02] transition-transform">Initialize Profile</Button>
+                </form>
+              )}
+              
               <button onClick={() => setAuthView('signin')} className="w-full text-[10px] uppercase font-black tracking-widest text-muted-foreground hover:text-primary transition-colors">Return to Access Portal</button>
             </motion.div>
           ) : (
